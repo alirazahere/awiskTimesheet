@@ -4,6 +4,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Awisk | @yield('title')</title>
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="A Timesheet for Awisk."/>
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('favicon.ico')}}">
@@ -27,10 +29,20 @@
 <!-- /Preloader -->
 
 <!-- HK Wrapper -->
-<div class="hk-wrapper hk-alt-nav hk-icon-nav">
-    @include('partials._nav')
-    @yield('content')
-</div>
+@if (Route::current()->getName() != 'login')
+    <div class="hk-wrapper hk-alt-nav hk-icon-nav">
+        @include('partials._nav')
+    </div>
+    <div class="hk-pg-wrapper">
+        @yield('content')
+    </div>
+
+@else
+    <div class="hk-wrapper">
+        @yield('content')
+    </div>
+@endif
+
 <!-- /HK Wrapper -->
 <!-- jQuery -->
 <script src="{{asset('vendors/jquery/dist/jquery.min.js')}}"></script>

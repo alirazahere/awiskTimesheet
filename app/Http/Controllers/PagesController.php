@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 
 class PagesController extends Controller
 {
-    protected function home(){
-          return view('pages.home');
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    protected function dashboard(){
+          return view('pages.dashboard');
     }
 }
