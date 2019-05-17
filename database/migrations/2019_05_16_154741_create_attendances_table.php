@@ -15,9 +15,8 @@ class CreateAttendancesTable extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->increments('id');
-            $table->time('timein');
-            $table->time('timeout');
-            $table->string('month');
+            $table->time('timein')->nullable();
+            $table->time('timeout')->nullable();
             $table->string('status');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')

@@ -19,6 +19,7 @@
     <link href="{{asset('vendors/jquery-toggles/css/themes/toggles-light.css')}}" rel="stylesheet" type="text/css">
     <!-- Custom CSS -->
     <link href="{{asset('dist/css/style.css')}}" rel="stylesheet" type="text/css">
+    @yield('stylesheet')
 </head>
 <body>
 
