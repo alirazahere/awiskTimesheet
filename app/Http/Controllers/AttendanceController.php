@@ -3,21 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use phpDocumentor\Reflection\Types\Null_;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function __construct()
     {
-      $atd = Attendance::all()->where('user_id',Auth::user()->id)->where('status','active')->sortByDesc('created_at');
-      return json_encode($atd);
+        $this->middleware('auth');
     }
 
     /**
@@ -27,17 +22,27 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        $date = Carbon::now()->format('Y-m-d');
-        $atd = Attendance::where('user_id', Auth::user()->id)->whereDate('created_at', $date)->first();
-        if ($atd && !empty($atd->timein) && !empty($atd->timeout)) {
-            $output = ['output' => 'default'];
-            echo json_encode($output);
-        } else if ($atd && !empty($atd->timein)) {
-            $output = ['output' => 'true', 'value' => $atd->timein];
-            echo json_encode($output);
+        $date = Carbon::now();
+        $today = $date->format('Y-m-d');
+        $yestarday = $date->subDays(1)->format('Y-m-d');
+        $previous_atd = Auth::user()->Attendance()->whereDate('created_at', $yestarday)->first();
+        if ( !empty($previous_atd) && $previous_atd->timein != Null && $previous_atd->timeout == Null ) {
+            $output = [ 'output' => 'error','message' => 'Please Marked Your Previous Attendance.'
+                ,'date'=>$yestarday,'value' => $previous_atd->timein ];
+            return json_encode($output);
         } else {
-            $output = ['output' => 'false', 'value' => $atd->timeout];
-            echo json_encode($output);
+            $atd = Auth::user()->Attendance()->whereDate('created_at', $today)->first();
+            if (!empty($atd)) {
+                if ($atd->timeout != NULL && $atd->timein != NULL) {
+                    $output = ['output' => 'default'];
+                    return json_encode($output);
+                } else if ($atd->timein != NULL) {
+                    $output = ['output' => 'true', 'value' => $atd->timein , 'date', $atd->created_at];
+                    return json_encode($output);
+                }
+            } else {
+                return json_encode($output = [ 'output' => 'false' ,'date' => $today ]);
+            }
         }
     }
 
@@ -53,18 +58,20 @@ class AttendanceController extends Controller
             $this->validate($request, [
                 'timein' => 'required'
             ]);
-            $atd = new Attendance();
-            $atd->timein = $request->get('timein');
-            $atd->user_id = Auth::user()->id;
-            $atd->status = 'active';
-            $atd->save();
+            Auth::user()->Attendance()->create([
+                'timein' => $request->input('timein'),
+                'timeout' => NULL,
+                'status' => 'active'
+            ]);
+
         } else {
             $this->validate($request, [
+                'timein' => 'null',
                 'timeout' => 'required'
             ]);
-            $date = Carbon::now()->format('Y-m-d');
-            $atd = Attendance::whereDate('created_at', $date)->where('user_id', Auth::user()->id)
-                ->update(['timeout' => $request->get('timeout')]);
+            $atd = Auth::user()->Attendance()->latest()->first();
+            $atd->timeout = $request->input('timeout');
+            $atd->save();
         }
         return redirect()->route('page.dashboard');
     }

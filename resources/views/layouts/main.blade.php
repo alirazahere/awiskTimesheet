@@ -73,7 +73,7 @@
 {{--<script src="{{asset('vendors/easy-pie-chart/dist/jquery.easypiechart.min.js')}}"></script>--}}
 
 <!-- Sparkline JavaScript -->
-<script src="{{asset('vendors/jquery.sparkline/dist/jquery.sparkline.min.js')}}"></script>
+{{--<script src="{{asset('vendors/jquery.sparkline/dist/jquery.sparkline.min.js')}}"></script>--}}
 
 <!-- Morris Charts JavaScript -->
 {{--<script src="{{asset('vendors/raphael/raphael.min.js')}}"></script>--}}
