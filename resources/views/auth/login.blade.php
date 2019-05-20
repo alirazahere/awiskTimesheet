@@ -20,7 +20,7 @@
                                            required>
                                     @if ($errors->has('email'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <small class="text-danger">{{ $errors->first('email') }}</small>
                                     </span>
                                     @endif
                                 </div>
@@ -30,7 +30,7 @@
                                                type="password" required>
                                         @if ($errors->has('password'))
                                             <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
+                                        <small class="text-danger">{{ $errors->first('password') }}</small>
                                     </span>
                                         @endif
                                     </div>

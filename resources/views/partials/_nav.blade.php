@@ -26,8 +26,8 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
                 <a class="dropdown-item" href="#"><i class="dropdown-icon zmdi zmdi-mail-send"></i><span>Request</span></a>
-                <a class="dropdown-item" href="#"><i
-                            class="dropdown-icon zmdi zmdi-account-add"></i><span>Create User</span></a>
+                <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} " href="{{route('user.index')}}"><i
+                            class="dropdown-icon zmdi zmdi-account-add"></i><span>Manage Users</span></a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}"
                    onclick="event.preventDefault();

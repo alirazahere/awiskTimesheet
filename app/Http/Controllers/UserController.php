@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -17,7 +19,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all()->where('id','!=',Auth::user()->id);
+        return view('users.index')->withUsers($users);
     }
 
     /**
@@ -27,7 +30,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**

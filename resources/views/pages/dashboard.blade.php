@@ -1,11 +1,5 @@
 @extends('layouts.main')
 @section('title','Dashboard')
-@section('stylesheet')
-    <!-- Data Table CSS -->
-    <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>
-    <link href="{{asset('vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css')}}" rel="stylesheet"
-          type="text/css"/>
-@endsection
 @section('content')
     <!-- Container -->
     <div class="container-fluid">
@@ -37,7 +31,7 @@
                                     </tr>
                                     </thead>
                                     <tbody class="atd_table_body">
-                                    @foreach(Auth::user()->Attendance->reverse() as $attendance)
+                                    @foreach( Auth::user()->Attendance->reverse() as $attendance)
                                         <tr>
                                             <td>{{ date('j M Y',strtotime($attendance->created_at)) }}</td>
                                             <td>{{ date('H:i A',strtotime($attendance->timein))}}</td>
@@ -56,7 +50,7 @@
                     {{csrf_field()}}
                     <p class="text-center lead mb-30">Mark your Attendance.</p>
                     <div class="form-group messages"></div>
-                    <div class="form-group">
+                    <div class="form-group timein_field">
                         <label class="mt-2" for="timein">TimeIn</label>
                         <input id="timein" name="timein"
                                class="form-control {{ $errors->has('timein') ? 'is-invalid' : '' }}"
@@ -68,7 +62,7 @@
                                     </span>
                         @endif
                     </div>
-                    <div class="form-group">
+                    <div class="form-group timeout_field">
                         <label class="mt-2" for="timein">TimeOut</label>
                         <input id="timeout" name="timeout"
                                class="form-control {{ $errors->has('timeout') ? 'is-invalid' : '' }}"
@@ -97,20 +91,6 @@
     <!-- /Container -->
 @endsection
 @section('script')
-    <script src="{{asset('vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-dt/js/dataTables.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-buttons/js/buttons.flash.min.js')}}"></script>
-    <script src="{{asset('vendors/jszip/dist/jszip.min.js')}}"></script>
-    <script src="{{asset('vendors/pdfmake/build/pdfmake.min.js')}}"></script>
-    <script src="{{asset('vendors/pdfmake/build/vfs_fonts.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-buttons/js/buttons.html5.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-buttons/js/buttons.print.min.js')}}"></script>
-    <script src="{{asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
-    <script src="{{asset('dist/js/dataTables-data.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script>
         $(document).ready(function () {
             create_atd_form();
@@ -119,16 +99,19 @@
             });
 
             function create_atd_form() {
+                var token = $('meta[name="csrf-token"]').attr("content");
                 $.ajax({
                     url: '{{route("attendance.create")}}',
+                    method:'post',
+                    data:{_token:token},
                     dataType: "json",
                     success: function (data) {
                         if (data.output == 'true') {
-                            $('#timein').attr('disabled', 'true');
+                            $('.timein_field').remove();
                             $('#Date').val(data.date);
                             $('#timein').val(data.value);
                         } else if (data.output == 'false') {
-                            $('#timeout').attr('disabled', 'true');
+                            $('.timeout_field').remove();
                             $('#Date').val(data.date);
                         } else if (data.output == 'default') {
                             var marked = '<div class="alert alert-success" role="alert">\n' +

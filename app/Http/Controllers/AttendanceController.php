@@ -37,7 +37,7 @@ class AttendanceController extends Controller
                     $output = ['output' => 'default'];
                     return json_encode($output);
                 } else if ($atd->timein != NULL) {
-                    $output = ['output' => 'true', 'value' => $atd->timein , 'date', $atd->created_at];
+                    $output = ['output' => 'true', 'value' => $atd->timein , 'date' => $atd->created_at->format('Y-m-d')];
                     return json_encode($output);
                 }
             } else {

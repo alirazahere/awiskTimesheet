@@ -11,12 +11,11 @@
 |
 */
 
-Route::get('/',function (){
-    return view('pages.dashboard');
-});
+Route::get('/','PagesController@dashboard');
 Route::get('/dashboard','PagesController@dashboard')->name('page.dashboard');
 Auth::routes();
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
-Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('attendance','AttendanceController')->except(['show','index']);
+//Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('attendance','AttendanceController')->except(['show','index','create']);
+Route::post('/attendance/create','AttendanceController@create')->name('attendance.create');
 Route::resource('user','UserController')->except(['show']);
