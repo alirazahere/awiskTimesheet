@@ -9,7 +9,7 @@
                     <div class="auth-form-wrap pt-xl-0 pt-70">
                         <div class="auth-form w-xl-30 w-lg-55 w-sm-75 w-100">
                             <a class="auth-brand text-center d-block mb-20" href="{{route('page.dashboard')}}">
-                                <img class="brand-img" src="dist/img/logo-light.png" alt="brand"/>
+                                <img width="50%" class="img-responsive img-thumbnail" src="{{asset('dist/img/logo.png')}}" alt="brand"/>
                             </a>
                             <form method="POST" action="{{ route('login') }}">
                                 {{csrf_field()}}
@@ -41,10 +41,12 @@
                                     <label class="custom-control-label font-14" for="remember">Keep me logged
                                         in</label>
                                 </div>
-                                <button class="btn btn-primary btn-block" type="submit">Login</button>
-                                <div class="option-sep">or</div>
+                                <div class="form-group">
+                                <button class="btn btn-outline-primary btn-block" type="submit">Login</button>
+                                    <div class="option-sep">or</div>
                                 <p class="text-center">Dont have an account yet ? <strong>contact your
                                         supervisor.</strong></p>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -4,7 +4,7 @@
        data-target="#navbarCollapseAlt" aria-controls="navbarCollapseAlt" aria-expanded="false"
        aria-label="Toggle navigation"><span class="feather-icon"><i data-feather="menu"></i></span></a>
     <a class="navbar-brand" href="{{route('page.dashboard')}}">
-        <img class="brand-img d-inline-block align-top" src="{{asset('dist/img/logo-light.png')}}" alt="brand"/>
+        <img class="brand-img img-responsive d-inline-block align-top" style="width:100px;height:34px;" src="{{asset('dist/img/logo.png')}}" alt="brand"/>
     </a>
     <div class="collapse navbar-collapse" id="navbarCollapseAlt">
         <ul class="navbar-nav">

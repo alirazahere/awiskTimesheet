@@ -81,7 +81,9 @@
                         <input id="Date" disabled
                                class="form-control" placeholder="Date" type="date">
                     </div>
-                    <button class="btn btn-primary btn-block" type="submit">Mark Attendance</button>
+                    <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit">Mark Attendance</button>
+                    </div>
                 </form>
             </div>
         </div>

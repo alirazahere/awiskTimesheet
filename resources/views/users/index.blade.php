@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-sm">
                             <div class="table-wrap">
-                                <table id="atd_table" class="table table-hover w-100 display pb-30">
+                                <table id="user_table" class="table table-hover w-100 display pb-30">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -44,7 +44,7 @@
                                             <td>{{ $user->UserRole->Role->role }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-primary">Edit</button>
-                                                <button type="button" class="btn btn-sm btn-danger">Delete</button>
+                                                <button id="btn_delete" data-id = "{{ $user->id }}" type="button" class="btn btn-sm btn-danger">Delete</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -56,7 +56,7 @@
                 </section>
             </div>
             <div class="col-md-4 create_atd_form">
-                <form method="POST"  class="card p-2" action="{{ route('attendance.store') }}" id="theform">
+                <form method="POST" class="card p-2" action="{{ route('user.store') }}">
                     {{csrf_field()}}
                     <p class="text-center lead mb-30">Create User</p>
                     <div class="form-group messages"></div>
@@ -88,10 +88,40 @@
 
                     <div class="form-group">
                         <label class="mt-2" for="password">Password</label>
-                        <input id="password"
-                               class="form-control" placeholder="password" type="password">
+                        <input id="password" name="password"
+                               class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
+                               placeholder="Password" type="password">
+                        @if ($errors->has('password'))
+                            <span class="help-block">
+                                        <small class="text-danger">{{ $errors->first('password') }}</small>
+                                    </span>
+                        @endif
                     </div>
-                    <button class="btn btn-primary btn-block" type="submit">Create User</button>
+
+                    <div class="form-group">
+                        <label class="mt-2" for="password-confirm">Confirm Password</label>
+                        <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="mt-2" for="role">Role</label>
+                        <select class="form-control {{ $errors->has('role') ? 'is-invalid' : '' }}" name="role"
+                                required>
+                            <option selected disabled>Select user role</option>
+                            @foreach ($roles as $role)
+                                <option value="{{$role->id}}">{{$role->role}}</option>
+                            @endforeach
+                        </select>
+                        @if ($errors->has('role'))
+                            <span class="help-block">
+                                        <small class="text-danger">{{ $errors->first('role') }}</small>
+                                    </span>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary btn-block" type="submit">Create User</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -101,4 +131,12 @@
     <!-- /Container -->
 @endsection
 @section('script')
+    <script>
+        $(document).ready(function () {
+           $('#user_table').DataTable();
+           $('#btn_delete').on('click',function () {
+              alert($(this).data('id'));
+           });
+        });
+    </script>
 @endsection

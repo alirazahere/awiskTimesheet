@@ -8,8 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="A Timesheet for Awisk."/>
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{asset('favicon.ico')}}">
-    <link rel="icon" href="{{asset('favicon.ico" type="image/x-icon')}}">
+    <link rel="shortcut icon" href="{{asset('favicon.png')}}">
+    <link rel="icon" href="{{asset('favicon.png')}}" type="image/x-icon">
     <!-- Morris Charts CSS -->
 {{--    <link href="{{asset('vendors/morris.js/morris.css')}}" rel="stylesheet" type="text/css" />--}}
 <!-- Toastr CSS -->
@@ -27,7 +27,6 @@
     @yield('stylesheet')
 </head>
 <body>
-
 <!-- Preloader -->
 <div class="preloader-it">
     <div class="loader-pendulums"></div>
@@ -39,7 +38,7 @@
     <div class="hk-wrapper hk-alt-nav hk-icon-nav">
         @include('partials._nav')
     </div>
-    <div class="hk-pg-wrapper">
+    <div class="hk-pg-wrapper" style="min-height: 789px;">
         @yield('content')
     </div>
 
@@ -92,7 +91,8 @@
 
 <!-- Toastr JS -->
 {{--<script src="{{asset('vendors/jquery-toast-plugin/dist/jquery.toast.min.js')}}"></script>--}}
-{{----}}
+{{--Sweet Alert--}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 <!-- Init JavaScript -->
 <script src="{{asset('dist/js/init.js')}}"></script>
 {{--<script src="{{asset('dist/js/dashboard-data.js')}}"></script>--}}
@@ -111,5 +111,5 @@
 <script src="{{asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('dist/js/dataTables-data.js')}}"></script>
 @yield('script')
-</body>\
+</body>
 </html>
