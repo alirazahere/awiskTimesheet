@@ -4,7 +4,8 @@
        data-target="#navbarCollapseAlt" aria-controls="navbarCollapseAlt" aria-expanded="false"
        aria-label="Toggle navigation"><span class="feather-icon"><i data-feather="menu"></i></span></a>
     <a class="navbar-brand" href="{{route('page.dashboard')}}">
-        <img class="brand-img img-responsive d-inline-block align-top" style="width:100px;height:34px;" src="{{asset('dist/img/logo.png')}}" alt="brand"/>
+        <img class="brand-img img-responsive d-inline-block align-top" style="width:100px;height:34px;"
+             src="{{asset('dist/img/logo.png')}}" alt="brand"/>
     </a>
     <div class="collapse navbar-collapse" id="navbarCollapseAlt">
         <ul class="navbar-nav">
@@ -24,9 +25,13 @@
                     </div>
                 </div>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
-                <a class="dropdown-item" href="#"><i class="dropdown-icon zmdi zmdi-mail-send"></i><span>Request</span></a>
-                <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} " href="{{route('user.index')}}"><i
+            <div class="dropdown-menu dropdown-menu-right">
+                <!-- Button trigger modal -->
+                <a href="#"  class="dropdown-item" data-toggle="modal" data-target="#exampleModal">
+                    <i class=" dropdown-icon zmdi zmdi-mail-send "></i> <span>Attendance Request</span>
+                </a>
+                <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} "
+                   href="{{route('user.index')}}"><i
                             class="dropdown-icon zmdi zmdi-account-add"></i><span>Manage Users</span></a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}"

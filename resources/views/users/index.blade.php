@@ -2,9 +2,9 @@
 @section('title','Manage User')
 @section('stylesheet')
     <!-- Data Table CSS -->
-    <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>
-    <link href="{{asset('vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css')}}" rel="stylesheet"
-          type="text/css"/>
+    {{--    <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>--}}
+    {{--    <link href="{{asset('vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css')}}" rel="stylesheet"--}}
+    {{--          type="text/css"/>--}}
 @endsection
 @section('content')
     <!-- Container -->
@@ -36,19 +36,6 @@
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody class="atd_table_body">
-                                    @foreach($users as $user)
-                                        <tr>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->UserRole->Role->role }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary">Edit</button>
-                                                <button id="btn_delete" data-id = "{{ $user->id }}" type="button" class="btn btn-sm btn-danger">Delete</button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -100,7 +87,8 @@
 
                     <div class="form-group">
                         <label class="mt-2" for="password-confirm">Confirm Password</label>
-                        <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation"
+                        <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control"
+                               name="password_confirmation"
                                required>
                     </div>
 
@@ -133,10 +121,46 @@
 @section('script')
     <script>
         $(document).ready(function () {
-           $('#user_table').DataTable();
-           $('#btn_delete').on('click',function () {
-              alert($(this).data('id'));
-           });
+            $('#user_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{!! route('getusers') !!}',
+                columns: [
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'role', name: 'role'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
+            });
+            $(document).on('click', '#btn_delete', function () {
+                if (confirm('Are your sure you want to delete this user ?')) {
+                    var token = $('meta[name="csrf-token"]').attr("content");
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url: '{{url('user')}}/' + id + '',
+                        method: 'Post',
+                        data: {_method: 'DELETE', _token: token},
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data == 'success') {
+                                $('#user_table').DataTable().ajax.reload();
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'Success...',
+                                    text: 'User has been deleted.'
+                                })
+                            } else {
+                                Swal.fire({
+                                    type: 'error',
+                                    title: 'Oops...',
+                                    text: 'Something went wrong!'
+                                })
+                            }
+                        }
+
+                    });
+                }
+            });
         });
     </script>
 @endsection

@@ -27,13 +27,19 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function UserRole(){
+    public function UserRole()
+    {
         return $this->hasOne('App\UserRole', 'user_id');
     }
 
-    public function Attendance ()
+    public function Requests()
     {
-        return $this->hasMany('App\Attendance','user_id');
+        return $this->hasMany('App\Request', 'author');
+    }
+
+    public function Attendance()
+    {
+        return $this->hasMany('App\Attendance', 'user_id');
     }
 
 }

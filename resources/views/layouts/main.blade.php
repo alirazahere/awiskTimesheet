@@ -19,7 +19,7 @@
     <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>
     <link href="{{asset('vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css')}}" rel="stylesheet"
           type="text/css"/>
-<!-- Toggles CSS -->
+    <!-- Toggles CSS -->
     <link href="{{asset('vendors/jquery-toggles/css/toggles.css" rel="stylesheet" type="text/css')}}">
     <link href="{{asset('vendors/jquery-toggles/css/themes/toggles-light.css')}}" rel="stylesheet" type="text/css">
     <!-- Custom CSS -->
@@ -39,6 +39,49 @@
         @include('partials._nav')
     </div>
     <div class="hk-pg-wrapper" style="min-height: 789px;">
+        <!-- Request Modal -->
+        <div class="modal fade {{ Session::has('errors') ? 'show': '' }}" id="exampleModal" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{{route('request.store')}}">
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <label for="subject">Subject : </label>
+                                <input id="subject" placeholder="Message Subject" class="form-control" name="subject"
+                                       type="text">
+                                @if ($errors->has('subject'))
+                                    <span class="help-block">
+                                        <small class="text-danger">{{ $errors->first('subject') }}</small>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message : </label>
+                                <textarea id="message" placeholder="Your Message." class="form-control" name="message"
+                                          type="text"></textarea>
+                                @if ($errors->has('message'))
+                                    <span class="help-block">
+                                        <small class="text-danger">{{ $errors->first('message') }}</small>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         @yield('content')
     </div>
 
@@ -110,6 +153,7 @@
 <script src="{{asset('vendors/datatables.net-buttons/js/buttons.print.min.js')}}"></script>
 <script src="{{asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('dist/js/dataTables-data.js')}}"></script>
+@include('partials._message')
 @yield('script')
 </body>
 </html>

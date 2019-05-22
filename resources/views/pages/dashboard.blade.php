@@ -3,7 +3,7 @@
 @section('content')
     <!-- Container -->
     <div class="container-fluid">
-        <!-- Title -->
+        {{-- Title --}}
         <div class="hk-pg-header">
             <h4 class="hk-pg-title"><span class="pg-title-icon"><i class="zmdi zmdi-calendar-account"></i></span>Attendance
                 Sheet</h4>
@@ -31,7 +31,7 @@
                                     </tr>
                                     </thead>
                                     <tbody class="atd_table_body">
-                                    @foreach( Auth::user()->Attendance->reverse() as $attendance)
+                                    @foreach( Auth::user()->Attendance->where('status',1)->reverse() as $attendance)
                                         <tr>
                                             <td>{{ date('j M Y',strtotime($attendance->created_at)) }}</td>
                                             <td>{{ date('H:i A',strtotime($attendance->timein))}}</td>
@@ -82,7 +82,7 @@
                                class="form-control" placeholder="Date" type="date">
                     </div>
                     <div class="form-group">
-                    <button class="btn btn-outline-primary btn-block" type="submit">Mark Attendance</button>
+                        <button class="btn btn-outline-primary btn-block" type="submit">Mark Attendance</button>
                     </div>
                 </form>
             </div>
@@ -104,8 +104,8 @@
                 var token = $('meta[name="csrf-token"]').attr("content");
                 $.ajax({
                     url: '{{route("attendance.create")}}',
-                    method:'post',
-                    data:{_token:token},
+                    method: 'post',
+                    data: {_token: token},
                     dataType: "json",
                     success: function (data) {
                         if (data.output == 'true') {
@@ -127,9 +127,8 @@
                             var message = '<div class="alert alert-warning alert-wth-icon alert-dismissible fade show" role="alert">\n' +
                                 '<span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span>You did not marked your previous timeout.\n' +
                                 '</div>';
-                            $('#timein').attr('disabled', 'true');
+                            $('.timein_field').remove();
                             $('#Date').val(data.date);
-                            $('#timein').val(data.value);
                             $('.messages').html(message);
                         } else {
                             var warning = '<div class="alert alert-warning alert-wth-icon alert-dismissible fade show" role="alert">\n' +

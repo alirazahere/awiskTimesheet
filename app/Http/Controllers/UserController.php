@@ -6,6 +6,7 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -21,9 +22,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all()->where('id', '!=', Auth::user()->id);
         $roles = Role::all();
-        return view('users.index')->withUsers($users)->withRoles($roles);
+        return view('users.index')->withRoles($roles);
     }
 
     /**
@@ -52,11 +52,17 @@ class UserController extends Controller
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = bcrypt($request->input('password'));
-        $user->save();
-        $user->UserRole()->create([
-           'user_id' => Auth::user()->id,
-           'role_id' => $request->input('role'),
-        ]);
+         if($user->save()){
+             $user->UserRole()->create([
+                 'user_id' => Auth::user()->id,
+                 'role_id' => $request->input('role'),
+             ]);
+             Session::flash('success','User has been created successfully .');
+         }
+         else{
+             Session::flash('error','Some error occurred while creating a user.');
+         }
+
         return redirect()->route('user.index');
     }
 
@@ -102,6 +108,13 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (request()->ajax()) {
+            if (User::destroy($id)) {
+                return json_encode('success');
+            } else {
+                return json_encode('error');
+            }
+
+        }
     }
 }
