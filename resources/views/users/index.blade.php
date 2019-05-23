@@ -124,7 +124,7 @@
             $('#user_table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('getusers') !!}',
+                ajax: '{!! route('datatable.get_users') !!}',
                 columns: [
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},

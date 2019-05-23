@@ -22,31 +22,31 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        if(request()->ajax()) {
+        if (request()->ajax()) {
             $date = Carbon::now();
             $today = $date->format('Y-m-d');
-            $yestarday = $date->subDays(1)->format('Y-m-d');
-            $previous_atd = Auth::user()->Attendance()->whereDate('created_at', $yestarday)->first();
-            if (!empty($previous_atd) && $previous_atd->timein != Null && $previous_atd->timeout == Null) {
-                $output = ['output' => 'error', 'message' => 'Please Marked Your Previous Attendance.'
-                    , 'date' => $yestarday, 'value' => $previous_atd->timein];
+            $yestarday = Carbon::yesterday()->format('Y-m-d');
+            $previous_atd = Auth::user()->Attendance()->whereDate('timein_date', $yestarday)->where('timeout', NULL)->first();
+            if (!empty($previous_atd)) {
+                $output = ['output' => 'error', 'date' => $yestarday];
                 return json_encode($output);
             } else {
-                $atd = Auth::user()->Attendance()->whereDate('created_at', $today)->first();
+                $atd = Auth::user()->Attendance()->whereDate('timein_date', $today)->first();
                 if (!empty($atd)) {
                     if ($atd->timeout != NULL && $atd->timein != NULL) {
                         $output = ['output' => 'default'];
                         return json_encode($output);
-                    } else if ($atd->timein != NULL) {
-                        $output = ['output' => 'true', 'value' => $atd->timein, 'date' => $atd->created_at->format('Y-m-d')];
+                    } else if ($atd->timein != NULL && $atd->timeout == NULL) {
+                        $output = ['output' => 'true', 'date' => $today];
                         return json_encode($output);
+                    } else {
+                        return json_encode($output = ['output' => 'false', 'date' => $today]);
                     }
                 } else {
                     return json_encode($output = ['output' => 'false', 'date' => $today]);
                 }
             }
-        }
-        else{
+        } else {
             return redirect()->route('page.dashboard');
         }
     }
@@ -59,60 +59,31 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        if (!isset($request->timeout)) {
-            $this->validate($request, [
-                'timein' => 'required'
-            ]);
-            Auth::user()->Attendance()->create([
-                'timein' => $request->input('timein'),
-                'timeout' => NULL,
-                'status' => True
-            ]);
-            Session::flash('success','Your today timein has been marked.');
+        if (request()->ajax() && request()->method('post')) {
+            $date = Carbon::now();
+            $atd = Auth::user()->Attendance()->whereDate('created_at', $date->format('Y-m-d'))->first();
+            if (!isset($atd) || ($atd->timein != NULL && $atd->timeout != NULL)) {
+                Auth::user()->Attendance()->create([
+                    'timein' => $date->format('H:i'),
+                    'timein_date' => $date->format('Y-m-d'),
+                    'timeout' => NULL,
+                    'timeout_date' => NULL,
+                    'status' => True
+                ]);
+                $output = ['output'=>'success','message'=>'Your TimeIn has been marked.'];
+                return json_encode($output);
 
+            } else {
+                $atd = Auth::user()->Attendance()->latest()->first();
+                $atd->timeout = $date->format('H:i');
+                $atd->timeout_date = $date->format('Y-m-d');
+                $atd->save();
+                $output = ['output'=>'success','message'=>'Your attendance has been marked.'];
+                return json_encode($output);
+            }
+            return redirect()->route('page.dashboard');
         } else {
-            $this->validate($request, [
-                'timeout' => 'required'
-            ]);
-            $atd = Auth::user()->Attendance()->latest()->first();
-            $atd->timeout = $request->input('timeout');
-            $atd->save();
-            Session::flash('success','Your have successfully marked your attendance.');
+            return redirect()->route('page.dashboard');
         }
-        return redirect()->route('page.dashboard');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

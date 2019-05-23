@@ -15,7 +15,10 @@ class CreateRequestsTable extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('subject');
+            $table->time('timein');
+            $table->date('timein_date');
+            $table->time('timeout');
+            $table->date('timeout_date');
             $table->string('message');
             $table->integer('author')->unsigned();
             $table->boolean('status');

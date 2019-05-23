@@ -17,6 +17,8 @@ class CreateAttendancesTable extends Migration
             $table->increments('id');
             $table->time('timein')->nullable();
             $table->time('timeout')->nullable();
+            $table->date('timein_date')->nullable();
+            $table->date('timeout_date')->nullable();
             $table->boolean('status');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')

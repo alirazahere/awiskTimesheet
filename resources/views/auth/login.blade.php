@@ -9,7 +9,7 @@
                     <div class="auth-form-wrap pt-xl-0 pt-70">
                         <div class="auth-form w-xl-30 w-lg-55 w-sm-75 w-100">
                             <a class="auth-brand text-center d-block mb-20" href="{{route('page.dashboard')}}">
-                                <img width="50%" class="img-responsive img-thumbnail" src="{{asset('dist/img/logo.png')}}" alt="brand"/>
+                                <img width="50%" class="img-responsive" src="{{asset('dist/img/logo.png')}}" alt="brand"/>
                             </a>
                             <form method="POST" action="{{ route('login') }}">
                                 {{csrf_field()}}
