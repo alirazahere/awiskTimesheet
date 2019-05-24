@@ -50,8 +50,8 @@
                     </div>
 
                     <div class="form-group">
-                        <button id="atd_submit" class="btn btn-outline-primary btn-block" type="submit">Mark Your
-                            TimeIn
+                        <button name="submit" id="atd_submit" value="submit" class="btn btn-outline-primary btn-block"
+                                type="submit">Submit
                         </button>
                     </div>
                 </form>
@@ -95,20 +95,19 @@
                                 '                                                <p>If you have any queries contact your supervisor.</p>\n' +
                                 '                                            </div>';
                             $('.atd_form').html(message);
-                        } else if (data.output == 'false') {
+                        } else if (data.output == 'success') {
                             $('#date').val(data.date);
-                            $('#atd_submit').html('Mark Your TimeIn');
+                            $('#atd_submit').html(data.submit_text);
+                            $('#atd_submit').val(data.submit);
                             $('.atd_message').html('');
-                        } else if (data.output == 'true') {
-                            $('#date').val(data.date);
-                            $('#atd_submit').html('Mark Your TimeOut');
-                        } else if (data.output == 'error') {
+                        }else if (data.output == 'warning') {
                             var message = '<div class="alert alert-warning alert-wth-icon alert-dismissible fade show" role="alert">\n' +
-                                '                                        <span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span> You did not marked your previous attendance.\n' +
+                                '                                        <span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span>'+data.message+''+
                                 '                                    </div>';
                             $('.atd_message').html(message);
+                            $('#atd_submit').val(data.submit);
                             $('#date').val(data.date);
-                            $('#atd_submit').text('Mark Your TimeOut')
+                            $('#atd_submit').text(data.submit_text);
                         } else {
                             var message = '<div class="alert alert-danger" role="alert">\n' +
                                 '                                                <h4 class="alert-heading mb-10">Error!</h4>\n' +
@@ -124,10 +123,11 @@
             $('#atd_form').on('submit', function (e) {
                 e.preventDefault();
                 var token = $('meta[name="csrf-token"]').attr("content");
+                var submit = $('#atd_submit').val();
                 $.ajax({
                     url: '{{route('attendance.store')}}',
                     method: 'post',
-                    data: {_token: token},
+                    data: {_token: token, submit: submit},
                     dataType: 'json',
                     beforeSend: function () {
                         $('#atd_submit').text('Processing...');

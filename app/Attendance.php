@@ -11,10 +11,11 @@ class Attendance extends Model
      *
      * @var array
      */
-    protected $fillable = ['timein','timeout','user_id','status'];
+    protected $fillable = ['timein', 'timeout', 'user_id', 'status'];
     public $timestamps = false;
 
-    public function User(){
+    public function User()
+    {
         return $this->belongsTo('App\User');
     }
 }
