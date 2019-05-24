@@ -43,7 +43,30 @@ class DatatableController extends Controller
     {
         if (request()->ajax()) {
             $atds = Attendance::all();
-            return DataTables::of($atds)->make(true);
+            return DataTables::of($atds)
+                ->addColumn('time_in', function ($data) {
+                    return date('h:i a', strtotime($data->timein));
+                })
+                ->addColumn('time_out', function ($data) {
+                    if ($data->timeout == NULL) {
+                        return "Not Marked";
+                    } else {
+                        return date('h:i a', strtotime($data->timeout));
+                    }
+
+                })
+                ->addColumn('timein_date', function ($data) {
+                    return date('Y-m-d', strtotime($data->timein));
+                })
+                ->addColumn('timeout_date', function ($data) {
+                    if ($data->timeout == NULL) {
+                        return "Not Marked";
+                    } else {
+                        return date('Y-m-d', strtotime($data->timeout));
+                    }
+
+                })
+                ->make(true);
         } else {
             return redirect()->route('login');
         }

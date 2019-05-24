@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-md-8">
                 <section class="hk-sec-wrapper">
-                    <h5 class="hk-sec-title">Your Attendance {{Auth::user()->Attendance[0]->created_at}}</h5>
+                    <h5 class="hk-sec-title">Your Attendance </h5>
                     <p class="mb-40">Add advanced interaction controls to HTML tables like <code>search, pagination &
                             selectors</code>. For responsive table just add the <code>responsive: true</code> to your
                         DataTables function. <a href="https://datatables.net/reference/option/" target="_blank">View all
@@ -69,12 +69,12 @@
             $('#atd_table').DataTable({
                 processing: true,
                 serverSide: true,
-                dataType:'json',
+                dataType: 'json',
                 ajax: '{!! route('datatable.get_attendances') !!}',
                 columns: [
-                    {data: 'timein', name: 'timein'},
-                    {data: 'created_at', name: 'created_at'},
-                    {data: 'timeout', name: 'timeout'},
+                    {data: 'time_in', name: 'time_in'},
+                    {data: 'timein_date', name: 'timein_date'},
+                    {data: 'time_out', name: 'time_out'},
                     {data: 'timeout_date', name: 'timeout_date'},
                 ]
             });
@@ -98,23 +98,24 @@
                         } else if (data.output == 'false') {
                             $('#date').val(data.date);
                             $('#atd_submit').html('Mark Your TimeIn');
+                            $('.atd_message').html('');
                         } else if (data.output == 'true') {
                             $('#date').val(data.date);
                             $('#atd_submit').html('Mark Your TimeOut');
                         } else if (data.output == 'error') {
-                            var message = '<div class="alert alert-warning" role="alert">\n' +
-                                '                                                <h4 class="alert-heading mb-10">You did not marked your previous timeout.</h4>\n' +
-                                '                                                <p>Marked your previous timeout.</p>\n' +
-                                '                                                <hr class="hr-soft-warning">\n' +
-                                '                                            </div>';
-                            $('.atd_form').html(message);
+                            var message = '<div class="alert alert-warning alert-wth-icon alert-dismissible fade show" role="alert">\n' +
+                                '                                        <span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span> You did not marked your previous attendance.\n' +
+                                '                                    </div>';
+                            $('.atd_message').html(message);
+                            $('#date').val(data.date);
+                            $('#atd_submit').text('Mark Your TimeOut')
                         } else {
                             var message = '<div class="alert alert-danger" role="alert">\n' +
                                 '                                                <h4 class="alert-heading mb-10">Error!</h4>\n' +
                                 '                                                <p>We are having some issues rightnow.</p>\n' +
                                 '                                                <hr class="hr-soft-danger">\n' +
                                 '                                            </div>';
-                            $('.atd_message').html(message);
+                            $('.atd_form').html(message);
                         }
                     }
                 });
@@ -126,7 +127,7 @@
                 $.ajax({
                     url: '{{route('attendance.store')}}',
                     method: 'post',
-                    data:{_token: token},
+                    data: {_token: token},
                     dataType: 'json',
                     beforeSend: function () {
                         $('#atd_submit').text('Processing...');
@@ -147,9 +148,18 @@
                                 text: 'Unable to perform the action.\n We are having some issues.'
                             });
                         }
-                        create_atd_form();
+                        $('#atd_table').DataTable().ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'center',
+                            type: 'error',
+                            title: 'Oppss...',
+                            text: 'Unable to perform the action.\n We are having some issues.'
+                        });
                     }
                 });
+                create_atd_form();
             });
 
         });

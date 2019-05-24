@@ -26,12 +26,17 @@ class AttendanceController extends Controller
             $date = Carbon::now();
             $today = $date->format('Y-m-d');
             $yestarday = Carbon::yesterday()->format('Y-m-d');
-            $previous_atd = Auth::user()->Attendance()->whereDate('timein_date', $yestarday)->where('timeout', NULL)->first();
-            if (!empty($previous_atd)) {
-                $output = ['output' => 'error', 'date' => $yestarday];
-                return json_encode($output);
+            $previous_atd = Auth::user()->Attendance()->whereDate('timein', $yestarday)->where('timeout', NULL)->first();
+            if ( !empty($previous_atd)) {
+                $prev_check = Carbon::parse($previous_atd->timein)->addHours(12);
+                if($date->lte($prev_check)){
+                    $prev_check = Carbon::parse($previous_atd->timein)->addHours(12);
+                    $output = ['output' => 'error','date' => $yestarday];
+                    return json_encode($output);
+                }
+
             } else {
-                $atd = Auth::user()->Attendance()->whereDate('timein_date', $today)->first();
+                $atd = Auth::user()->Attendance()->whereDate('timein', $today)->first();
                 if (!empty($atd)) {
                     if ($atd->timeout != NULL && $atd->timein != NULL) {
                         $output = ['output' => 'default'];
@@ -61,22 +66,18 @@ class AttendanceController extends Controller
     {
         if (request()->ajax() && request()->method('post')) {
             $date = Carbon::now();
-            $atd = Auth::user()->Attendance()->whereDate('created_at', $date->format('Y-m-d'))->first();
-            if (!isset($atd) || ($atd->timein != NULL && $atd->timeout != NULL)) {
+            $atd = Auth::user()->Attendance()->latest('timein')->first();
+            if ( !isset($atd) && ($atd->timein == NULL && $atd->timeout == NULL)) {
                 Auth::user()->Attendance()->create([
-                    'timein' => $date->format('H:i'),
-                    'timein_date' => $date->format('Y-m-d'),
+                    'timein' => $date,
                     'timeout' => NULL,
-                    'timeout_date' => NULL,
                     'status' => True
                 ]);
                 $output = ['output'=>'success','message'=>'Your TimeIn has been marked.'];
                 return json_encode($output);
 
             } else {
-                $atd = Auth::user()->Attendance()->latest()->first();
-                $atd->timeout = $date->format('H:i');
-                $atd->timeout_date = $date->format('Y-m-d');
+                $atd->timeout = $date;
                 $atd->save();
                 $output = ['output'=>'success','message'=>'Your attendance has been marked.'];
                 return json_encode($output);

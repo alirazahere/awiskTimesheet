@@ -11,11 +11,8 @@ class Attendance extends Model
      *
      * @var array
      */
-    protected $fillable = ['timein','timeout','timein_date','timeout_date','user_id','status'];
-
-    protected $casts = [
-        'timein' => 'datetime:Y-m-d',
-    ];
+    protected $fillable = ['timein','timeout','user_id','status'];
+    public $timestamps = false;
 
     public function User(){
         return $this->belongsTo('App\User');
