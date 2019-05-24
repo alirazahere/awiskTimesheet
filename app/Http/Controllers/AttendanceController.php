@@ -38,12 +38,11 @@ class AttendanceController extends Controller
                     return json_encode($output);
                 }
             } else {
-                $atd = Auth::user()->Attendance()->whereDate('timein', $today)->first();
-                if (!empty($atd)) {
-                    if ($atd->timeout != NULL && $atd->timein != NULL) {
+                if (!empty($today_atd)) {
+                    if ($today_atd->timeout != NULL && $today_atd->timein != NULL) {
                         $output = ['output' => 'default'];
                         return json_encode($output);
-                    } else if ($atd->timein != NULL && $atd->timeout == NULL) {
+                    } else if ($today_atd->timein != NULL && $today_atd->timeout == NULL) {
                         $output = ['output' => 'success', 'submit_text' => 'Mark Your TimeOut', 'submit' => 'timeout', 'date' => $today];
                         return json_encode($output);
                     } else {
