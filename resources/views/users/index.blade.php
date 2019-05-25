@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </section>
-            </div>
+                </div>
             <div class="col-md-4 create_atd_form">
                 <form method="POST" class="card p-2" action="{{ route('user.store') }}">
                     {{csrf_field()}}
@@ -132,6 +132,8 @@
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
+
+
             $(document).on('click', '#btn_delete', function () {
                 if (confirm('Are your sure you want to delete this user ?')) {
                     var token = $('meta[name="csrf-token"]').attr("content");

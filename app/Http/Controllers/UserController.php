@@ -25,16 +25,6 @@ class UserController extends Controller
         $roles = Role::all();
         return view('users.index')->withRoles($roles);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -65,18 +55,6 @@ class UserController extends Controller
 
         return redirect()->route('user.index');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -85,7 +63,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        $roles = Role::all();
+        return view('users.edit')->withUser($user)->withRoles($roles);
     }
 
     /**
@@ -97,7 +77,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required|max:255',
+            'role'=>'required'
+        ]);
+        $user = User::find($id);
+        $user->UserRole->role_id = $request->input('role');
+        $user->name = $request->input('name');
+        Session::flash('success','User has been edited.');
+        return redirect()->route('user.index');
     }
 
     /**

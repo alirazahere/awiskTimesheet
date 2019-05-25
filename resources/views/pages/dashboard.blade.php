@@ -100,9 +100,9 @@
                             $('#atd_submit').html(data.submit_text);
                             $('#atd_submit').val(data.submit);
                             $('.atd_message').html('');
-                        }else if (data.output == 'warning') {
+                        } else if (data.output == 'warning') {
                             var message = '<div class="alert alert-warning alert-wth-icon alert-dismissible fade show" role="alert">\n' +
-                                '                                        <span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span>'+data.message+''+
+                                '                                        <span class="alert-icon-wrap"><i class="zmdi zmdi-help"></i></span>' + data.message + '' +
                                 '                                    </div>';
                             $('.atd_message').html(message);
                             $('#atd_submit').val(data.submit);
