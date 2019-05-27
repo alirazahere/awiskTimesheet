@@ -11,7 +11,8 @@
     <div class="container-fluid">
         <!-- Title -->
         <div class="hk-pg-header">
-            <h4 class="hk-pg-title"><span class="pg-title-icon"><i class="zmdi zmdi-comment-edit"></i></span>Edit User Info</h4>
+            <h4 class="hk-pg-title"><span class="pg-title-icon"><i class="zmdi zmdi-comment-edit"></i></span>Edit User
+                Info</h4>
         </div>
         <!-- /Title -->
         <!-- Row -->
@@ -41,7 +42,52 @@
                         </div>
                     </div>
                 </section>
+                <!-- Modal -->
+                <div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit Attendance</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" id="EditAtdForm">
+                                    {{csrf_field()}}
+                                    <input name="id" id="id" type="hidden">
+                                    <div class="form-group error_message"></div>
+                                    <div class="form-group">
+                                        <label for="timein">TimeIn:</label>
+                                        <input name="timein" class="form-control" id="timein" type="time">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="timein_date">TimeIn Date:</label>
+                                        <input name="timein_date" class="form-control" id="timein_date" type="date">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="timeout">TimeOut:</label>
+                                        <input name="timeout" class="form-control" id="timeout" type="time">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="timeout_date">TimeOut Date:</label>
+                                        <input name="timeout_date" class="form-control" id="timeout_date" type="date">
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-outline-grey" data-dismiss="modal">Close
+                                        </button>
+                                        <button id="editAtd_submit" type="submit" class="btn btn-outline-primary">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            {{--           End of Modal --}}
             <div class="col-md-4 create_atd_form">
                 <form method="post" class="card p-2" action="{{route('user.update',$user->id)}}">
                     {{csrf_field()}}
@@ -82,7 +128,6 @@
             </div>
         </div>
         <!-- /Row -->
-
     </div>
     <!-- /Container -->
 @endsection
@@ -99,8 +144,111 @@
                     {data: 'timein_date', name: 'timein_date'},
                     {data: 'time_out', name: 'time_out'},
                     {data: 'timeout_date', name: 'timeout_date'},
-                    {data: 'action',orderable: false,searchable: false},
+                    {data: 'action', orderable: false, searchable: false},
                 ]
+            });
+            $(document).on('click', '#btn_edit', function () {
+                var token = $('meta[name="csrf-token"]').attr("content");
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '{{route('atdAjax.fetchAtd')}}',
+                    method: 'post',
+                    dataType: 'json',
+                    data: {id: id, _token: token},
+                    success: function (data) {
+                        if (data != null) {
+                            $('#id').val(id);
+                            $('#timein').val(data.timein);
+                            $('#timein_date').val(data.timein_date);
+                            $('#timeout').val(data.timeout);
+                            $('#timeout_date').val(data.timeout_date);
+                            $('#EditModal').modal('show');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'center',
+                            type: 'error',
+                            title: 'Oppss...',
+                            text: 'Unable to perform the action.\n We are having some issues.'
+                        });
+                    }
+                });
+            });
+
+            $(document).on('click', '#btn_delete', function () {
+                if (confirm('Are you sure you want delete ?')) {
+                    var token = $('meta[name="csrf-token"]').attr("content");
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url: '{{route('atdAjax.deleteAtd')}}',
+                        method: 'post',
+                        dataType: 'json',
+                        data: {id: id, _token: token},
+                        success: function (data) {
+                            if (data == 'success') {
+                                Swal.fire({
+                                    position: 'center',
+                                    type: 'success',
+                                    title: 'Deleted...',
+                                    text: 'Attendance has been deleted.'
+                                });
+                                $('#atd_table').DataTable().ajax.reload();
+                            } else {
+                                Swal.fire({
+                                    position: 'center',
+                                    type: 'error',
+                                    title: 'Oppss...',
+                                    text: 'Unable to delete attendance.'
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                position: 'center',
+                                type: 'error',
+                                title: 'Oppss...',
+                                text: 'Unable to perform the action.\n We are having some issues.'
+                            });
+                        }
+                    });
+                }
+            });
+
+            $(document).on('submit', '#EditAtdForm', function (e) {
+                e.preventDefault();
+                var form_data = $(this).serialize();
+                $.ajax({
+                    url: '{{route('atdAjax.updateAtd')}}',
+                    method: 'post',
+                    dataType: 'json',
+                    data: form_data,
+                    success: function (data) {
+                        if (data.error.length > 0) {
+                            var error_html = '';
+                            for (var count = 0; count < data.error.length; count++) {
+                                error_html += '<div class="alert alert-danger">' + data.error[count] + '</div>';
+                            }
+                            $('.error_message').html(error_html);
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                type: 'success',
+                                title: 'Success...',
+                                text: 'Attendance is updated.'
+                            });
+                            $('#atd_table').DataTable().ajax.reload();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'center',
+                            type: 'error',
+                            title: 'Oppss...',
+                            text: 'Unable to perform the action.\n We are having some issues.'
+                        });
+                    }
+                });
             });
         });
     </script>

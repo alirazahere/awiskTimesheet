@@ -19,11 +19,26 @@ Route::get('/dashboard',function (){
     return view('pages.dashboard');
 })->middleware('auth')->name('page.dashboard');
 Auth::routes();
+
+// Logout Controller
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
+//Attendance Controller
 Route::post('/attendance/store','AttendanceController@store')->name('attendance.store');
 Route::post('/attendance/create','AttendanceController@create')->name('attendance.create');
+
+//User Controller
 Route::resource('user','UserController')->except(['show','create']);
+
+//DataTable Controller
 Route::get('/getusers','DatatableController@UserDatatable')->name('datatable.get_users');
 Route::get('/getattendances','DatatableController@AttendanceDatatable')->name('datatable.get_attendances');
 Route::get('/{user}/getattendances','DatatableController@UserAttendanceDatatable')->name('datatable.get_userattendances');
+
+//Request Controller
 Route::post('/request/store','RequestsController@store')->name('request.store');
+
+//Attendance Ajax
+Route::post('/attendanceAjax/fetchAttendance','EditAttendanceAjax@fetch_Attendance')->name('atdAjax.fetchAtd');
+Route::post('/attendanceAjax/updateAttendance','EditAttendanceAjax@Update_Attendance')->name('atdAjax.updateAtd');
+Route::post('/attendanceAjax/deleteAttendance','EditAttendanceAjax@Delete_Attendance')->name('atdAjax.deleteAtd');
