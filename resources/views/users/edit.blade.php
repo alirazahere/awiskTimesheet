@@ -61,18 +61,22 @@
                                     <div class="form-group">
                                         <label for="timein">TimeIn:</label>
                                         <input name="timein" class="form-control" id="timein" type="time">
+                                        <span class="help-block timein_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="timein_date">TimeIn Date:</label>
                                         <input name="timein_date" class="form-control" id="timein_date" type="date">
+                                        <span class="help-block timein_date_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="timeout">TimeOut:</label>
                                         <input name="timeout" class="form-control" id="timeout" type="time">
+                                        <span class="help-block timeout_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="timeout_date">TimeOut Date:</label>
                                         <input name="timeout_date" class="form-control" id="timeout_date" type="date">
+                                        <span class="help-block timeout_date_error"></span>
                                     </div>
                                     <div class="form-group">
                                         <button type="button" class="btn btn-outline-grey" data-dismiss="modal">Close
@@ -148,6 +152,7 @@
                 ]
             });
             $(document).on('click', '#btn_edit', function () {
+                $('#EditAtdForm .help-block').html('');
                 var token = $('meta[name="csrf-token"]').attr("content");
                 var id = $(this).data('id');
                 $.ajax({
@@ -156,12 +161,12 @@
                     dataType: 'json',
                     data: {id: id, _token: token},
                     success: function (data) {
-                        if (data != null) {
-                            $('#id').val(id);
-                            $('#timein').val(data.timein);
-                            $('#timein_date').val(data.timein_date);
-                            $('#timeout').val(data.timeout);
-                            $('#timeout_date').val(data.timeout_date);
+                        if (data != null){
+                            $('#EditAtdForm #id').val(id);
+                            $('#EditAtdForm #timein').val(data.timein);
+                            $('#EditAtdForm #timein_date').val(data.timein_date);
+                            $('#EditAtdForm #timeout').val(data.timeout);
+                            $('#EditAtdForm #timeout_date').val(data.timeout_date);
                             $('#EditModal').modal('show');
                         }
                     },
@@ -223,13 +228,14 @@
                     method: 'post',
                     dataType: 'json',
                     data: form_data,
+                    beforeSend: function () {
+                        $('#editAtd_submit').text('Submitting...');
+                    },
                     success: function (data) {
-                        if (data.error.length > 0) {
-                            var error_html = '';
-                            for (var count = 0; count < data.error.length; count++) {
-                                error_html += '<div class="alert alert-danger">' + data.error[count] + '</div>';
-                            }
-                            $('.error_message').html(error_html);
+                        if (data.errors.length > -1) {
+                            $.each(data.errors,function(index,error) {
+                                $('#EditAtdForm '+error.name).html('<span class="text-danger">'+error.message+'<span>');
+                            });
                         } else {
                             Swal.fire({
                                 position: 'center',
@@ -238,7 +244,10 @@
                                 text: 'Attendance is updated.'
                             });
                             $('#atd_table').DataTable().ajax.reload();
+                            $('#EditModal').modal('hide');
+                            $('#EditAtdForm .help-block').html('');
                         }
+                        $('#editAtd_submit').text('Submit');
                     },
                     error: function () {
                         Swal.fire({
@@ -247,6 +256,7 @@
                             title: 'Oppss...',
                             text: 'Unable to perform the action.\n We are having some issues.'
                         });
+                        $('#editAtd_submit').text('Submit');
                     }
                 });
             });

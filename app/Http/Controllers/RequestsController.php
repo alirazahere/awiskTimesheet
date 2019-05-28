@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class RequestsController extends Controller
 {
@@ -11,16 +13,42 @@ class RequestsController extends Controller
         $this->middleware('auth');
     }
 
-    public function store(Request $data){
-         $this->validate($data,[
-             'subject'=> 'required|max:255',
-             'message'=>'required|max:255',
-         ]);
-         $request = new Request();
-         $request->subject = $data->input('subject');
-         $request->message = $data->input('message');
-         $request->author = Auth::user()->id;
-         $request->status = True;
+    public function store(Request $data)
+    {
+        if (request()->ajax() && request()->method('post')) {
+            $validate = Validator::make($data->all(), [
+                'timein' => 'required|date_format:H:i',
+                'timein_date' => 'required|date',
+                'timeout' => 'required|date_format:H:i',
+                'timeout_date' => 'required|date',
+                'message' => 'required|max:255',
+            ]);
+            $error_array = array();
+            $success = '';
+            if ($validate->fails())
+            {
+                foreach ($validate->messages()->getMessages() as $field_name => $messages)
+                {
+                    $error_array[] = array('name'=>".".$field_name."_error",'message'=>$messages);
+                }
+                $output = ['errors'=>$error_array,'success',$success];
+             return json_encode($output);
+            }
+            else {
+                $request = new Request();
+                $timeIn = $data->input('timein_date') . "" . $data->input('timein');
+                $timeOut = $data->input('timeout_date') . "" . $data->input('timeout');
 
+                $request->timein = $timeIn;
+                $request->timeout = $timeOut;
+                $request->subject = $data->input('subject');
+                $request->message = $data->input('message');
+                $request->author = Auth::user()->id;
+                $request->status = True;
+                $request->save();
+                $output = ['errors'=>$error_array,'success',$success];
+                return json_encode($output);
+            }
+        }
     }
 }

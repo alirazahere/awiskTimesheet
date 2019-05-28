@@ -11,9 +11,11 @@ class Request extends Model
      *
      * @var array
      */
-    protected $fillable = ['subject','message','author','status'];
+    protected $fillable = ['subject', 'message', 'author', 'status'];
+    public $timestamps = false;
 
-    public function User(){
-              $this->belongsTo('App\User');
+    public function User()
+    {
+        $this->belongsTo('App\User');
     }
 }

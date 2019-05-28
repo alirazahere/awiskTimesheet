@@ -39,15 +39,17 @@ class EditAttendanceAjax extends Controller
                 'timein'  => 'required|date_format:H:i',
                 'timein_date'  => 'required|date',
                 'timeout'  => 'required|date_format:H:i',
-                'timeout_date'  => 'required|date',
+                'timeout_date' => 'required|date',
             ]);
             $error_array = array();
             if ($validation->fails())
             {
                 foreach ($validation->messages()->getMessages() as $field_name => $messages)
                 {
-                    $error_array[] = $messages;
+                    $error_array[] = array('name'=>".".$field_name."_error",'message'=>$messages);
                 }
+                $output = ['errors'=>$error_array];
+                return json_encode($output);
             }
             else {
                 $id = $request->get('id');
@@ -64,9 +66,7 @@ class EditAttendanceAjax extends Controller
                 $atd->timeout = $atd_timeout;
                 $atd->save();
             }
-            $output = array(
-                'error'     =>  $error_array,
-            );
+            $output = array('errors'=>$error_array);
             echo json_encode($output);
         }
         else{
