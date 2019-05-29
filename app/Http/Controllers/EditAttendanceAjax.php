@@ -19,10 +19,11 @@ class EditAttendanceAjax extends Controller
             $timein_date = $atd_timein->format('Y-m-d');
             $timeout_date = $atd_timeout->format('Y-m-d');
             $output = [
-                'timein'=>$timein ,
-                'timein_date'=>$timein_date,
-                'timeout'=>$timeout,
-                'timeout_date'=>$timeout_date
+                '#atd_id'=>$id,
+                '#timein'=>$timein ,
+                '#timein_date'=>$timein_date,
+                '#timeout'=>$timeout,
+                '#timeout_date'=>$timeout_date
             ];
             return json_encode($output);
         }

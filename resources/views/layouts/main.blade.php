@@ -7,13 +7,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="A Timesheet for Awisk."/>
+    <!-- Daterangepicker CSS -->
+    <link href="vendors/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('favicon.png')}}">
     <link rel="icon" href="{{asset('favicon.png')}}" type="image/x-icon">
-    <!-- Morris Charts CSS -->
-{{--    <link href="{{asset('vendors/morris.js/morris.css')}}" rel="stylesheet" type="text/css" />--}}
-<!-- Toastr CSS -->
-{{--    <link href="{{asset('vendors/jquery-toast-plugin/dist/jquery.toast.min.css')}}" rel="stylesheet" type="text/css">--}}
 {{--    Data Table CSS--}}
 <!-- Data Table CSS -->
     <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>
@@ -39,7 +37,6 @@
         @include('partials._nav')
     </div>
     <div class="hk-pg-wrapper" style="min-height: 789px;">
-        @include('partials._requestForm')
         @yield('content')
     </div>
 
@@ -74,29 +71,12 @@
 <script src="{{asset('vendors/waypoints/lib/jquery.waypoints.min.js')}}"></script>
 <script src="{{asset('vendors/jquery.counterup/jquery.counterup.min.js')}}"></script>
 
-<!-- Easy pie chart JS -->
-{{--<script src="{{asset('vendors/easy-pie-chart/dist/jquery.easypiechart.min.js')}}"></script>--}}
-
-<!-- Sparkline JavaScript -->
-{{--<script src="{{asset('vendors/jquery.sparkline/dist/jquery.sparkline.min.js')}}"></script>--}}
-
-<!-- Morris Charts JavaScript -->
-{{--<script src="{{asset('vendors/raphael/raphael.min.js')}}"></script>--}}
-{{--<script src="{{asset('vendors/morris.js/morris.min.js')}}"></script>--}}
-
-<!-- EChartJS JavaScript -->
-{{--<script src="{{asset('vendors/echarts/dist/echarts-en.min.js')}}"></script>--}}
-
-<!-- Peity JavaScript -->
-{{--<script src="{{asset('vendors/peity/jquery.peity.min.js')}}"></script>--}}
-
-<!-- Toastr JS -->
-{{--<script src="{{asset('vendors/jquery-toast-plugin/dist/jquery.toast.min.js')}}"></script>--}}
 {{--Sweet Alert--}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
 <!-- Init JavaScript -->
 <script src="{{asset('dist/js/init.js')}}"></script>
-{{--<script src="{{asset('dist/js/dashboard-data.js')}}"></script>--}}
+
 {{--Data Table--}}
 <script src="{{asset('vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
@@ -111,50 +91,6 @@
 <script src="{{asset('vendors/datatables.net-buttons/js/buttons.print.min.js')}}"></script>
 <script src="{{asset('vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('dist/js/dataTables-data.js')}}"></script>
-<script>
-    $(document).ready(function () {
-        $(document).on('submit', '#request_form', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                url: '{{route('request.store')}}',
-                method: 'post',
-                dataType: 'json',
-                data: formData,
-                beforeSend: function () {
-                    $('#requestSubmit').text('Sending Request ...');
-                },
-                success: function (data) {
-                    if (data.errors.length > -1){
-                        $.each(data.errors,function(index,error) {
-                            $(error.name).html('<span class="text-danger">'+error.message+'<span>');
-                        });
-                    }
-                    else {
-                        Swal.fire({
-                            position: 'center',
-                            type: 'success',
-                            title: 'Success...',
-                            text: 'Your request has been sent.'
-                        });
-                        $('#request_form')[0].reset();
-                        $('#request_form .help-block').html('');
-                    }
-                    $('#requestSubmit').text('Send Request');
-                        },
-                error: function () {
-                    Swal.fire({
-                        position: 'center',
-                        type: 'error',
-                        title: 'Oppss...',
-                        text: 'Unable to send request.\n We are having some issues.'
-                    });
-                    $('#requestSubmit').text('Send Request');
-                }
-            });
-        });
-    });
-</script>
 @include('partials._message')
 @yield('script')
 </body>

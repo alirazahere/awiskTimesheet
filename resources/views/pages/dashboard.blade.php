@@ -29,9 +29,74 @@
                                         <th>TimeIn Date</th>
                                         <th>TimeOut</th>
                                         <th>TimeOut Date</th>
+                                        <th>Request</th>
                                     </tr>
                                     </thead>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Request Modal -->
+                    <div class="modal fade" id="request_modal" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Make Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="request_form" method="post">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" id="atd_id" name="atd_id">
+                                        <div class="form-group">
+                                            <label for="timein">Timein : </label>
+                                            <input id="timein" placeholder="Timein" class="form-control time_picker"
+                                                   name="timein"
+                                                   type="time">
+                                            <span class="help-block timein_error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="timein_date">Timein Date : </label>
+                                            <input id="timein_date" placeholder="Timein Date"
+                                                   class="form-control date_picker" name="timein_date"
+                                                   type="date">
+                                            <span class="help-block timein_date_error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="timein">Timeout : </label>
+                                            <input id="timeout" placeholder="Timeout"
+                                                   class="form-control time_picker"
+                                                   name="timeout"
+                                                   type="time">
+                                            <span class="help-block timeout_error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="timeout_date">Timeout Date : </label>
+                                            <input id="timeout_date" placeholder="Timeout Date"
+                                                   class="form-control date_picker"
+                                                   name="timeout_date"
+                                                   type="date">
+                                            <span class="help-block timeout_error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message">Message : </label>
+                                            <textarea id="message" placeholder="Your Message."
+                                                      class="form-control" name="message"
+                                                      type="text"></textarea>
+                                            <span class="help-block message_error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                            </button>
+                                            <button id="requestSubmit" type="submit" class="btn btn-outline-primary">
+                                                Send Request
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -76,6 +141,7 @@
                     {data: 'timein_date', name: 'timein_date'},
                     {data: 'time_out', name: 'time_out'},
                     {data: 'timeout_date', name: 'timeout_date'},
+                    {data: 'action', name: 'action'},
                 ]
             });
 
@@ -161,7 +227,74 @@
                 });
                 create_atd_form();
             });
+            $(document).on('submit', '#request_form', function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '{{route('request.store')}}',
+                    method: 'post',
+                    dataType: 'json',
+                    data: formData,
+                    beforeSend: function () {
+                        $('#requestSubmit').text('Sending Request ...');
+                    },
+                    success: function (data) {
+                        if (data.errors.length > -1) {
+                            $.each(data.errors, function (index, error) {
+                                $(error.name).html('<span class="text-danger">' + error.message + '<span>');
+                            });
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                type: 'success',
+                                title: 'Success...',
+                                text: 'Your request has been sent.'
+                            });
+                            $('#request_form')[0].reset();
+                            $('#request_form .help-block').html('');
+                        }
+                        $('#requestSubmit').text('Send Request');
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'center',
+                            type: 'error',
+                            title: 'Oppss...',
+                            text: 'Unable to send request.\n We are having some issues.'
+                        });
+                        $('#requestSubmit').text('Send Request');
+                    }
+                });
+            });
 
+            $(document).on('click', '#request_btn', function () {
+                $('#request_form .help-block').html('');
+                var token = $('meta[name="csrf-token"]').attr("content");
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '{{route('atdAjax.fetchAtd')}}',
+                    method: 'post',
+                    dataType: 'json',
+                    data: {id: id, _token: token},
+                    success: function (data) {
+                        if (data != null) {
+                            $.each(data, function (index,value) {
+                                $("#request_form "+index).val(value);
+                            });
+                            $('#request_modal').modal('show');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'center',
+                            type: 'error',
+                            title: 'Oppss...',
+                            text: 'Unable to perform the action.\n We are having some issues.'
+                        });
+                        $('#request_modal').modal('hide');
+                    }
+                });
+            });
         });
     </script>
 @endsection 

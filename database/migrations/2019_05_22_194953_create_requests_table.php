@@ -15,13 +15,16 @@ class CreateRequestsTable extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timein',0)->nullable();
-            $table->timestamp('timeout',0)->nullable();
+            $table->timestamp('timein', 0)->nullable();
+            $table->timestamp('timeout', 0)->nullable();
             $table->string('message');
             $table->integer('author')->unsigned();
             $table->boolean('status');
+            $table->integer('attendance_id')->unsigned();
             $table->foreign('author')->references('id')
                 ->on('users')->onDelete('cascade');
+            $table->foreign('attendance_id')->references('id')
+                ->on('attendances')->onDelete('cascade');
         });
     }
 

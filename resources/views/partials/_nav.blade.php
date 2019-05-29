@@ -26,10 +26,6 @@
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                <!-- Button trigger modal -->
-                <a href="#"  class="dropdown-item" data-toggle="modal" data-target="#exampleModal">
-                    <i class=" dropdown-icon zmdi zmdi-mail-send "></i> <span>Attendance Request</span>
-                </a>
                 <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} "
                    href="{{route('user.index')}}"><i
                             class="dropdown-icon zmdi zmdi-account-add"></i><span>Manage Users</span></a>

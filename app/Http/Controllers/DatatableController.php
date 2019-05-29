@@ -19,7 +19,8 @@ class DatatableController extends Controller
         $this->middleware('auth');
     }
 
-    protected function UserAttendanceDatatable($id){
+    protected function UserAttendanceDatatable($id)
+    {
         if (request()->ajax()) {
             $atds = Attendance::whereUser_id($id);
             return DataTables::of($atds)
@@ -67,7 +68,7 @@ class DatatableController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     $button = '<div class="btn-group" role="group">';
-                    $button .= '<a href="'.route('user.edit',$data->id).'" name="delete" class="btn btn-primary btn-sm">Edit</a>';
+                    $button .= '<a href="' . route('user.edit', $data->id) . '" name="delete" class="btn btn-primary btn-sm">Edit</a>';
                     $button .= '<button id="btn_delete" type="button" name="delete" data-id="' . $data->id . '" class="btn btn-danger btn-sm">Delete</button></div>';
                     return $button;
                 })
@@ -80,7 +81,7 @@ class DatatableController extends Controller
     protected function AttendanceDatatable()
     {
         if (request()->ajax()) {
-            $atds = Attendance::all();
+            $atds = Attendance::whereUser_id(Auth::user()->id);
             return DataTables::of($atds)
                 ->addColumn('time_in', function ($data) {
                     return date('h:i a', strtotime($data->timein));
@@ -91,7 +92,6 @@ class DatatableController extends Controller
                     } else {
                         return date('h:i a', strtotime($data->timeout));
                     }
-
                 })
                 ->addColumn('timein_date', function ($data) {
                     return date('Y-m-d', strtotime($data->timein));
@@ -102,7 +102,13 @@ class DatatableController extends Controller
                     } else {
                         return date('Y-m-d', strtotime($data->timeout));
                     }
-
+                })
+                ->addColumn('action', function ($data) {
+                    $req = '
+                <button href="#" id="request_btn" data-id="' . $data->id . '" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#request_modal">
+                    Request Change
+                </button>';
+                    return $req;
                 })
                 ->make(true);
         } else {
