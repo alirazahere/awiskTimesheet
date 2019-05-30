@@ -114,6 +114,20 @@
                         @endif
                     </div>
                     <div class="form-group">
+                        <label for="role">Line Manager:</label>
+                        <select id="role" name="role" class="form-control" required>
+                            @foreach ($roles as $role)
+                                <option {{$role->role == $user->UserRole->role->role ? 'selected': '' }} value="{{$role->id}}">
+                                    {{$role->role}}</option>
+                            @endforeach
+                        </select>
+                        @if ($errors->has('role'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('role') }}</strong>
+                                    </span>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label for="role">Role:</label>
                         <select id="role" name="role" class="form-control" required>
                             @foreach ($roles as $role)
