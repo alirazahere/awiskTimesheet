@@ -11,12 +11,13 @@ class UserRole extends Model
      *
      * @var array
      */
+
     protected $fillable = [
-        'user_id', 'role_id',
+        'role_id',
+        'user_id'
     ];
 
-    public function Role()
-    {
-        return $this->belongsTo('App\Role');
+    public function Role(){
+        return $this->belongsTo('App\Role','id');
     }
 }

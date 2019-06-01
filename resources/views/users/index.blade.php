@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </section>
-                </div>
+            </div>
             <div class="col-md-4 create_atd_form">
                 <form method="POST" class="card p-2" action="{{ route('user.store') }}">
                     {{csrf_field()}}
@@ -90,6 +90,23 @@
                         <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control"
                                name="password_confirmation"
                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Line Manager:</label>
+                        <select id="role" name="linemanager" class="form-control" required>
+                            <option selected value="0">None</option>
+                            @if ( count($linemanagers)> -1 )
+                                @foreach ($linemanagers as $linemanager)
+                                    <option value="{{ $linemanager->id }}">{{$linemanager->name}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        @if ($errors->has('role'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('linemanager') }}</strong>
+                                    </span>
+                        @endif
                     </div>
 
                     <div class="form-group">

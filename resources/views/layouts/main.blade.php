@@ -7,8 +7,6 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="A Timesheet for Awisk."/>
-    <!-- Daterangepicker CSS -->
-    <link href="vendors/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('favicon.png')}}">
     <link rel="icon" href="{{asset('favicon.png')}}" type="image/x-icon">

@@ -13,6 +13,9 @@
                 <a class="nav-link {{ Route::current()->getName() == 'page.dashboard' ? 'active' : '' }} "
                    href="{{route('page.dashboard')}}">Dashboard</a>
             </li>
+            <li class="nav-item">
+
+            </li>
         </ul>
     </div>
     <ul class="navbar-nav hk-navbar-content">

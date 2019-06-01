@@ -16,6 +16,6 @@ class Request extends Model
 
     public function User()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User','id');
     }
 }

@@ -7,14 +7,34 @@
         <div class="hk-pg-header">
             <h4 class="hk-pg-title"><span class="pg-title-icon"><i class="zmdi zmdi-calendar-account"></i></span>Attendance
                 Sheet</h4>
-            <small>logged in as {{ Auth::user()->UserRole->Role->role }}</small>
+            <small>logged in as {{ Auth::user()->Role()->first()->role }}</small>
         </div>
         <!-- /Title -->
         <!-- Row -->
         <div class="row">
             <div class="col-md-8">
                 <section class="hk-sec-wrapper">
-                    <h5 class="hk-sec-title">Your Attendance </h5>
+                    <div class="row">
+                        <div class="col-sm-8"><h5 class="hk-sec-title">Your Attendance </h5></div>
+                        <div class="col-sm-4 text-right">
+                            <div class="btn-group dropdown">
+                                <button type="button" class="dropdown-toggle btn btn-outline-primary"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Attendance Requests
+                                </button>
+                                <div class="dropdown-menu w-210p">
+                                    @foreach ($users as $user)
+                                        @foreach ($user->UserRequest()->get() as $request)
+                                            <a class="dropdown-item" href="#">{{ $user->name }}</a>
+                                            <p class="dropdown-item-text">{{ strlen($request->message) > 50 ? $request->message.'...' : $request->message  }}</p>
+                                            <div class="dropdown-divider"></div>
+                                        @endforeach
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
                     <p class="mb-40">Add advanced interaction controls to HTML tables like <code>search, pagination &
                             selectors</code>. For responsive table just add the <code>responsive: true</code> to your
                         DataTables function. <a href="https://datatables.net/reference/option/" target="_blank">View all
@@ -278,8 +298,8 @@
                     data: {id: id, _token: token},
                     success: function (data) {
                         if (data != null) {
-                            $.each(data, function (index,value) {
-                                $("#request_form "+index).val(value);
+                            $.each(data, function (index, value) {
+                                $("#request_form " + index).val(value);
                             });
                             $('#request_modal').modal('show');
                         }

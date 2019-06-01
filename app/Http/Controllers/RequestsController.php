@@ -37,7 +37,7 @@ class RequestsController extends Controller
                 $timeIn = $data->input('timein_date') . " " . $data->input('timein');
                 $timeOut = $data->input('timeout_date') . " " . $data->input('timeout');
 
-                Auth::user()->Requests()->create([
+                Auth::user()->UserRequest()->create([
                     'timein' => $timeIn,
                     'timeout' => $timeOut,
                     'message' => $data->input('message'),

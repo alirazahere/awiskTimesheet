@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -8,51 +9,56 @@ use Illuminate\Support\Facades\Validator;
 
 class EditAttendanceAjax extends Controller
 {
-    protected function fetch_Attendance(Request $request){
-        if(request()->ajax()){
+    protected function fetch_Attendance(Request $request)
+    {
+        if (request()->ajax()) {
             $id = $request->get('id');
             $atd = Attendance::find($id);
-            $atd_timein =  Carbon::parse($atd->timein);
-            $atd_timeout =  Carbon::parse($atd->timeout);
+            $atd_timein = Carbon::parse($atd->timein);
+            if ($atd->timeout == null) {
+                $timeout_date = null;
+                $timeout = null;
+            }
+            else{
+                $atd_timeout = Carbon::parse($atd->timeout);
+                $timeout = $atd_timeout->format('H:i');
+                $timeout_date = $atd_timeout->format('Y-m-d');
+            }
             $timein = $atd_timein->format('H:i');
-            $timeout = $atd_timeout->format('H:i');
             $timein_date = $atd_timein->format('Y-m-d');
-            $timeout_date = $atd_timeout->format('Y-m-d');
+
             $output = [
-                '#atd_id'=>$id,
-                '#timein'=>$timein ,
-                '#timein_date'=>$timein_date,
-                '#timeout'=>$timeout,
-                '#timeout_date'=>$timeout_date
+                '#id' => $id,
+                '#timein' => $timein,
+                '#timein_date' => $timein_date,
+                '#timeout' => $timeout,
+                '#timeout_date' => $timeout_date
             ];
             return json_encode($output);
-        }
-        else{
+        } else {
             return redirect()->route('page.dashboard');
         }
     }
 
-    protected function Update_Attendance(Request $request){
-        if(request()->ajax() && request()->method('post')){
+    protected function Update_Attendance(Request $request)
+    {
+        if (request()->ajax() && request()->method('post')) {
 
             $validation = Validator::make($request->all(), [
                 'id' => 'required|integer',
-                'timein'  => 'required|date_format:H:i',
-                'timein_date'  => 'required|date',
-                'timeout'  => 'required|date_format:H:i',
+                'timein' => 'required|date_format:H:i',
+                'timein_date' => 'required|date',
+                'timeout' => 'required|date_format:H:i',
                 'timeout_date' => 'required|date',
             ]);
             $error_array = array();
-            if ($validation->fails())
-            {
-                foreach ($validation->messages()->getMessages() as $field_name => $messages)
-                {
-                    $error_array[] = array('name'=>".".$field_name."_error",'message'=>$messages);
+            if ($validation->fails()) {
+                foreach ($validation->messages()->getMessages() as $field_name => $messages) {
+                    $error_array[] = array('name' => "." . $field_name . "_error", 'message' => $messages);
                 }
-                $output = ['errors'=>$error_array];
+                $output = ['errors' => $error_array];
                 return json_encode($output);
-            }
-            else {
+            } else {
                 $id = $request->get('id');
                 $timein = $request->get('timein');
                 $timeout = $request->get('timeout');
@@ -67,29 +73,27 @@ class EditAttendanceAjax extends Controller
                 $atd->timeout = $atd_timeout;
                 $atd->save();
             }
-            $output = array('errors'=>$error_array);
+            $output = array('errors' => $error_array);
             echo json_encode($output);
-        }
-        else{
+        } else {
             return redirect()->route('page.dashboard');
         }
     }
 
-    protected function Delete_Attendance(Request $request){
-        if(request()->ajax() && request()->method('post')){
-            $validate = Validator::make($request->all(),[
-                'id'=> 'required|integer'
+    protected function Delete_Attendance(Request $request)
+    {
+        if (request()->ajax() && request()->method('post')) {
+            $validate = Validator::make($request->all(), [
+                'id' => 'required|integer'
             ]);
-            if (!$validate->fails()){
+            if (!$validate->fails()) {
                 $id = $request->get('id');
                 Attendance::destroy($id);
                 return json_encode('success');
-            }
-            else{
+            } else {
                 json_encode('error');
             }
-        }
-        else{
+        } else {
             return redirect()->route('page.dashboard');
         }
     }

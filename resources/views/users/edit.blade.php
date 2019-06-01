@@ -1,11 +1,5 @@
 @extends('layouts.main')
 @section('title','Manage User')
-@section('stylesheet')
-    <!-- Data Table CSS -->
-    {{--    <link href="{{asset('vendors/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css')}}"/>--}}
-    {{--    <link href="{{asset('vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css')}}" rel="stylesheet"--}}
-    {{--          type="text/css"/>--}}
-@endsection
 @section('content')
     <!-- Container -->
     <div class="container-fluid">
@@ -115,15 +109,17 @@
                     </div>
                     <div class="form-group">
                         <label for="role">Line Manager:</label>
-                        <select id="role" name="role" class="form-control" required>
-                            @foreach ($roles as $role)
-                                <option {{$role->role == $user->UserRole->role->role ? 'selected': '' }} value="{{$role->id}}">
-                                    {{$role->role}}</option>
+                        <select id="role" name="linemanager" class="form-control" required>
+                            <option value="0">None</option>
+                            @foreach ($linemanagers as $linemanager)
+                                @if ($linemanager->id != $user->id )
+                                    <option {{ Auth::user()->line_manager == $linemanager ? 'selected' : '' }} value="{{ $linemanager->id }}">{{$linemanager->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                         @if ($errors->has('role'))
                             <span class="help-block">
-                                        <strong>{{ $errors->first('role') }}</strong>
+                                        <strong>{{ $errors->first('linemanager') }}</strong>
                                     </span>
                         @endif
                     </div>
@@ -131,7 +127,7 @@
                         <label for="role">Role:</label>
                         <select id="role" name="role" class="form-control" required>
                             @foreach ($roles as $role)
-                                <option {{$role->role == $user->UserRole->role->role ? 'selected': '' }} value="{{$role->id}}">
+                                <option {{$role->role == $user->Role()->first()->role ? 'selected': '' }} value="{{$role->id}}">
                                     {{$role->role}}</option>
                             @endforeach
                         </select>
@@ -175,12 +171,10 @@
                     dataType: 'json',
                     data: {id: id, _token: token},
                     success: function (data) {
-                        if (data != null){
-                            $('#EditAtdForm #id').val(id);
-                            $('#EditAtdForm #timein').val(data.timein);
-                            $('#EditAtdForm #timein_date').val(data.timein_date);
-                            $('#EditAtdForm #timeout').val(data.timeout);
-                            $('#EditAtdForm #timeout_date').val(data.timeout_date);
+                        if (data != null) {
+                            $.each(data,function (index,value) {
+                                $('#EditAtdForm ' + index).val(value);
+                            });
                             $('#EditModal').modal('show');
                         }
                     },
@@ -247,8 +241,8 @@
                     },
                     success: function (data) {
                         if (data.errors.length > -1) {
-                            $.each(data.errors,function(index,error) {
-                                $('#EditAtdForm '+error.name).html('<span class="text-danger">'+error.message+'<span>');
+                            $.each(data.errors, function (index, error) {
+                                $('#EditAtdForm ' + error.name).html('<span class="text-danger">' + error.message + '<span>');
                             });
                         } else {
                             Swal.fire({

@@ -64,7 +64,7 @@ class DatatableController extends Controller
             $users = User::all()->where('id', '!=', Auth::user()->id);
             return DataTables::of($users)
                 ->addColumn('role', function ($data) {
-                    return $data->UserRole->Role->role;
+                    return $data->Role()->first()->role;
                 })
                 ->addColumn('action', function ($data) {
                     $button = '<div class="btn-group" role="group">';
