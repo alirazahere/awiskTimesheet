@@ -34,7 +34,7 @@ class User extends Authenticatable
 
     public function UserRequest()
     {
-        return $this->hasMany('App\Request', 'author');
+        return $this->hasMany('App\Requests', 'author');
     }
 
     public function Attendance()

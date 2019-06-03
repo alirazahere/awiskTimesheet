@@ -106,7 +106,7 @@ class DatatableController extends Controller
                 ->addColumn('action', function ($data) {
                     $req = '
                 <button href="#" id="request_btn" data-id="' . $data->id . '" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#request_modal">
-                    Request Change
+                    Requests Change
                 </button>';
                     return $req;
                 })

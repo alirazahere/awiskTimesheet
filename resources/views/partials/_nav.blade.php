@@ -14,7 +14,8 @@
                    href="{{route('page.dashboard')}}">Dashboard</a>
             </li>
             <li class="nav-item">
-
+                <a class="nav-link {{ Route::current()->getName() == 'request.index' ? 'active' : '' }} "
+                   href="{{route('request.index')}}">Requests</a>
             </li>
         </ul>
     </div>

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class EditAttendanceAjax extends Controller
 {
+
     protected function fetch_Attendance(Request $request)
     {
         if (request()->ajax()) {
@@ -97,4 +98,5 @@ class EditAttendanceAjax extends Controller
             return redirect()->route('page.dashboard');
         }
     }
+
 }

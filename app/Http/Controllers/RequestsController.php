@@ -2,15 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Requests;
 
 class RequestsController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function index()
+    {
+        $users = User::whereLine_manager(Auth::user()->id)->get();
+        $requests = array();
+        foreach ($users as $user) {
+            foreach ($user->UserRequest()->whereStatus(true)->get() as $request) {
+                $requests[] = $request;
+            }
+        }
+        return view('requests.index')->withRequests($requests);
     }
 
     public function store(Request $data)

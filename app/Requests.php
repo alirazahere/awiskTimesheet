@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Request extends Model
+class Requests extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,10 +12,13 @@ class Request extends Model
      * @var array
      */
     protected $fillable = ['subject', 'message', 'author', 'status','attendance_id','timein','timeout'];
-    public $timestamps = false;
 
     public function User()
     {
-        return $this->belongsTo('App\User','id');
+        return $this->belongsTo('App\User','author');
+    }
+    public function Attendance()
+    {
+        return $this->belongsTo('App\Attendance','attendance_id');
     }
 }

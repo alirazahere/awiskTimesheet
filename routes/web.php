@@ -32,8 +32,9 @@ Route::get('/getusers', 'DatatableController@UserDatatable')->name('datatable.ge
 Route::get('/getattendances', 'DatatableController@AttendanceDatatable')->name('datatable.get_attendances');
 Route::get('/{user}/getattendances', 'DatatableController@UserAttendanceDatatable')->name('datatable.get_userattendances');
 
-//Request Controller
+//Requests Controller
 Route::post('/request/store', 'RequestsController@store')->name('request.store');
+Route::get('/requests', 'RequestsController@index')->name('request.index');
 
 //Attendance Ajax
 Route::post('/attendanceAjax/fetchAttendance', 'EditAttendanceAjax@fetch_Attendance')->name('atdAjax.fetchAtd');

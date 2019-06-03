@@ -18,4 +18,8 @@ class Attendance extends Model
     {
         return $this->belongsTo('App\User');
     }
+    public function AttendanceRequest()
+    {
+        return $this->hasMany('App\Requests', 'attendance_id');
+    }
 }

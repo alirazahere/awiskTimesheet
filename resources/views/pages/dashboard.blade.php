@@ -14,27 +14,7 @@
         <div class="row">
             <div class="col-md-8">
                 <section class="hk-sec-wrapper">
-                    <div class="row">
-                        <div class="col-sm-8"><h5 class="hk-sec-title">Your Attendance </h5></div>
-                        <div class="col-sm-4 text-right">
-                            <div class="btn-group dropdown">
-                                <button type="button" class="dropdown-toggle btn btn-outline-primary"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Attendance Requests
-                                </button>
-                                <div class="dropdown-menu w-210p">
-                                    @foreach ($users as $user)
-                                        @foreach ($user->UserRequest()->get() as $request)
-                                            <a class="dropdown-item" href="#">{{ $user->name }}</a>
-                                            <p class="dropdown-item-text">{{ strlen($request->message) > 50 ? $request->message.'...' : $request->message  }}</p>
-                                            <div class="dropdown-divider"></div>
-                                        @endforeach
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
+                    <h5 class="hk-sec-title">Your Attendance </h5>
                     <p class="mb-40">Add advanced interaction controls to HTML tables like <code>search, pagination &
                             selectors</code>. For responsive table just add the <code>responsive: true</code> to your
                         DataTables function. <a href="https://datatables.net/reference/option/" target="_blank">View all
@@ -56,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Request Modal -->
+                    <!-- Requests Modal -->
                     <div class="modal fade" id="request_modal" tabindex="-1" role="dialog"
                          aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -247,6 +227,7 @@
                 });
                 create_atd_form();
             });
+
             $(document).on('submit', '#request_form', function (e) {
                 e.preventDefault();
                 var formData = $(this).serialize();
@@ -256,7 +237,7 @@
                     dataType: 'json',
                     data: formData,
                     beforeSend: function () {
-                        $('#requestSubmit').text('Sending Request ...');
+                        $('#requestSubmit').text('Sending Requests ...');
                     },
                     success: function (data) {
                         if (data.errors.length > -1) {
@@ -273,7 +254,7 @@
                             $('#request_form')[0].reset();
                             $('#request_form .help-block').html('');
                         }
-                        $('#requestSubmit').text('Send Request');
+                        $('#requestSubmit').text('Send Requests');
                     },
                     error: function () {
                         Swal.fire({
@@ -282,7 +263,7 @@
                             title: 'Oppss...',
                             text: 'Unable to send request.\n We are having some issues.'
                         });
-                        $('#requestSubmit').text('Send Request');
+                        $('#requestSubmit').text('Send Requests');
                     }
                 });
             });

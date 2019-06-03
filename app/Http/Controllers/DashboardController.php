@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
@@ -15,6 +16,12 @@ class DashboardController extends Controller
     protected function index()
     {
         $users = User::whereLine_manager(Auth::user()->id)->get();
-        return view('pages.dashboard')->withUsers($users);
+        $requests = array();
+        foreach ($users as $user) {
+            foreach ($user->UserRequest()->get() as $request) {
+                $requests[] = $request;
+            }
+        }
+        return view('pages.dashboard')->withRequests($requests);
     }
 }
