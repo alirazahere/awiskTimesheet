@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Attendance;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,12 +20,34 @@ class RequestsController extends Controller
     {
         $users = User::whereLine_manager(Auth::user()->id)->get();
         $requests = array();
+        $pending_requests = array();
         foreach ($users as $user) {
             foreach ($user->UserRequest()->whereStatus(true)->get() as $request) {
                 $requests[] = $request;
             }
+            foreach ($user->UserRequest()->whereStatus(false)->get() as $pending_request) {
+                $pending_requests[] = $pending_request;
+            }
         }
-        return view('requests.index')->withRequests($requests);
+        return view('requests.index')->withRequests($requests)->withPendingRequests($pending_requests);
+    }
+
+    public function approve(Request $data){
+        if (request()->ajax() && request()->method('post') ){
+            $req_id = $data->input('id');
+            $request = Requests::find($req_id);
+            $atd_id = $request->attendance_id;
+            $attendance = Attendance::find($atd_id);
+            $attendance->timein = $request->timein;
+            $attendance->timeout = $request->timeout;
+            $request->status = false;
+            $request->save();
+            $attendance->save();
+            return json_encode('success');
+        }
+        else{
+            return redirect()->route('request.index');
+        }
     }
 
     public function store(Request $data)

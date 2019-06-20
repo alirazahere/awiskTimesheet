@@ -35,6 +35,7 @@ Route::get('/{user}/getattendances', 'DatatableController@UserAttendanceDatatabl
 //Requests Controller
 Route::post('/request/store', 'RequestsController@store')->name('request.store');
 Route::get('/requests', 'RequestsController@index')->name('request.index');
+Route::post('/request/store', 'RequestsController@approve')->name('request.approve');
 
 //Attendance Ajax
 Route::post('/attendanceAjax/fetchAttendance', 'EditAttendanceAjax@fetch_Attendance')->name('atdAjax.fetchAtd');
