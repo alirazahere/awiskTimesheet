@@ -30,7 +30,7 @@
 <!-- /Preloader -->
 
 <!-- HK Wrapper -->
-@if (Route::current()->getName() != 'login')
+@if (Route::current()->getName() != 'login' and Route::current()->getName() != 'register')
     <div class="hk-wrapper hk-alt-nav hk-icon-nav">
         @include('partials._nav')
     </div>

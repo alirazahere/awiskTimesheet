@@ -37,7 +37,7 @@
                                                                 / Old
                                                                 Timeout: {{ date('h:i a',strtotime($request->Attendance->timeout)) }}
                                                             </li>
-                                                            <li> Remarks: {{$request->message}} </li>
+                                                            <li> Message: {{$request->message}} </li>
                                                         </ul>
                                                         <a class="text-right btn_approve" data-id="{{ $request->id }}"
                                                            style="font-size:18px;" href="#"><i
@@ -63,16 +63,23 @@
                                             @if ( count($pendingRequests)>0)
                                                 @foreach ($pendingRequests as $request)
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                        User: {{$request->User->name}} / New
-                                                        Date: {{ date('Y-m-d',strtotime($request->timein)) }} / New
-                                                        Timein: {{ date('h:i a',strtotime($request->timein)) }} / New
-                                                        Timeout: {{ date('h:i a',strtotime($request->timeout)) }}
-                                                        / Old
-                                                        Date: {{ date('Y-m-d',strtotime($request->Attendance->timein)) }}
-                                                        / Old
-                                                        Timein: {{ date('h:i a',strtotime($request->Attendance->timein)) }}
-                                                        / Old
-                                                        Timeout: {{ date('h:i a',strtotime($request->Attendance->timeout)) }}
+                                                        <ul class="list-group">
+                                                            <li>
+                                                                User: {{$request->User->name}} / New
+                                                                Date: {{ date('Y-m-d',strtotime($request->timein)) }} /
+                                                                New
+                                                                Timein: {{ date('h:i a',strtotime($request->timein)) }}
+                                                                / New
+                                                                Timeout: {{ date('h:i a',strtotime($request->timeout)) }}
+                                                                / Old
+                                                                Date: {{ date('Y-m-d',strtotime($request->Attendance->timein)) }}
+                                                                / Old
+                                                                Timein: {{ date('h:i a',strtotime($request->Attendance->timein)) }}
+                                                                / Old
+                                                                Timeout: {{ date('h:i a',strtotime($request->Attendance->timeout)) }}
+                                                            </li>
+                                                            <li> Message: {{$request->message}} </li>
+                                                        </ul>
                                                     </li>
                                                 @endforeach
                                             @else

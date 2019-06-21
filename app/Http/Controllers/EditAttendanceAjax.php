@@ -29,7 +29,7 @@ class EditAttendanceAjax extends Controller
             $timein_date = $atd_timein->format('Y-m-d');
 
             $output = [
-                '#id' => $id,
+                '#atd_id' => $id,
                 '#timein' => $timein,
                 '#timein_date' => $timein_date,
                 '#timeout' => $timeout,

@@ -240,7 +240,7 @@
                         $('#requestSubmit').text('Sending Requests ...');
                     },
                     success: function (data) {
-                        if (data.errors.length > -1) {
+                        if (data.errors.length > 0 ) {
                             $.each(data.errors, function (index, error) {
                                 $(error.name).html('<span class="text-danger">' + error.message + '<span>');
                             });

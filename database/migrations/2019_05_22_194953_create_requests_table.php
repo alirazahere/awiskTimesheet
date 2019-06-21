@@ -18,7 +18,8 @@ class CreateRequestsTable extends Migration
             $table->timestamps(0);
             $table->timestamp('timein', 0)->nullable();
             $table->timestamp('timeout', 0)->nullable();
-            $table->string('message');
+            $table->string('message')->nullable();
+            $table->string('remark')->nullable();;
             $table->integer('author')->unsigned();
             $table->boolean('status');
             $table->integer('attendance_id')->unsigned();

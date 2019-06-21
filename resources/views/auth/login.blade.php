@@ -13,7 +13,7 @@
                             </a>
                             <form method="POST" action="{{ route('login') }}">
                                 {{csrf_field()}}
-                                <h1 class="display-4 text-center mb-10">Awisk Time Sheet</h1>
+                                <h1 class="display-4 text-center mb-10">awisk Time Sheet</h1>
                                 <p class="text-center mb-30">Sign in to mark and view your attendance.</p>
                                 <div class="form-group {{ $errors->has('email') ? ' is-invalid' : '' }}">
                                     <input id="email" name="email" class="form-control" placeholder="Email" type="email"
@@ -44,8 +44,7 @@
                                 <div class="form-group">
                                 <button class="btn btn-outline-primary btn-block" type="submit">Login</button>
                                     <div class="option-sep">or</div>
-                                <p class="text-center">Dont have an account yet ? <strong>contact your
-                                        supervisor.</strong></p>
+                                    <p class="text-center">Do have an account yet ? <a href="{{route('register')}}">Sign Up</a></p>
                                 </div>
                             </form>
                         </div>

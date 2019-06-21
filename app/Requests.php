@@ -11,7 +11,7 @@ class Requests extends Model
      *
      * @var array
      */
-    protected $fillable = ['subject', 'message', 'author', 'status','attendance_id','timein','timeout'];
+    protected $fillable = ['subject', 'message', 'author', 'status','attendance_id','timein','timeout','remark'];
 
     public function User()
     {
