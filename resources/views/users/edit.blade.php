@@ -183,7 +183,7 @@
                             position: 'center',
                             type: 'error',
                             title: 'Oppss...',
-                            text: 'Unable to perform the action.\n We are having some issues.'
+                            html: 'Unable to send request.<br> We are having some issues.'
                         });
                     }
                 });
@@ -221,7 +221,7 @@
                                 position: 'center',
                                 type: 'error',
                                 title: 'Oppss...',
-                                text: 'Unable to perform the action.\n We are having some issues.'
+                                html: 'Unable to send request.<br> We are having some issues.'
                             });
                         }
                     });
@@ -262,7 +262,7 @@
                             position: 'center',
                             type: 'error',
                             title: 'Oppss...',
-                            text: 'Unable to perform the action.\n We are having some issues.'
+                            html: 'Unable to send request.<br> We are having some issues.'
                         });
                         $('#editAtd_submit').text('Submit');
                     }

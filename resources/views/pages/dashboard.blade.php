@@ -5,16 +5,32 @@
     <div class="container-fluid">
         {{-- Title --}}
         <div class="hk-pg-header">
-            <h4 class="hk-pg-title"><span class="pg-title-icon"><i class="zmdi zmdi-calendar-account"></i></span>Attendance
+            <h4 class="hk-pg-title"><span class="pg-title-icon"><i
+                            class="zmdi zmdi-calendar-account"></i></span>Attendance
                 Sheet</h4>
             <small>logged in as {{ Auth::user()->Role()->first()->role }}</small>
         </div>
         <!-- /Title -->
         <!-- Row -->
         <div class="row">
-            <div class="col-md-8">
-                <section class="hk-sec-wrapper">
-                    <h5 class="hk-sec-title">Your Attendance </h5>
+            <div class="col-md-12">
+                <section class="hk-sec-wrapper justify-content-between">
+                    <div class="row">
+                        <div class="col-md-8 justify-content-between">
+                            <h5 class="hk-sec-title mt-md-2">Your Attendance </h5>
+                        </div>
+                        <div class="col-md-4 atd_form justify-content-between">
+                            <form id="atd_form" action="{{ route('attendance.store') }}">
+                                {{csrf_field()}}
+                                <div class="form-group">
+                                    <button name="submit" id="atd_submit" value="submit"
+                                            class="btn btn-outline-primary btn-block"
+                                            type="submit">
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <p class="mb-40">Add advanced interaction controls to HTML tables like <code>search, pagination &
                             selectors</code>. For responsive table just add the <code>responsive: true</code> to your
                         DataTables function. <a href="https://datatables.net/reference/option/" target="_blank">View all
@@ -102,28 +118,8 @@
                     </div>
                 </section>
             </div>
-            <div class="col-md-4 atd_form">
-                <form id="atd_form" class="card p-2" action="{{ route('attendance.store') }}">
-                    {{csrf_field()}}
-                    <p class="text-center lead mb-30">Mark your Attendance.</p>
-                    <div class="form-group atd_message"></div>
-
-                    <div class="form-group">
-                        <label class="mt-2" for="date">Date</label>
-                        <input id="date" disabled
-                               class="form-control" placeholder="Date" type="date">
-                    </div>
-
-                    <div class="form-group">
-                        <button name="submit" id="atd_submit" value="submit" class="btn btn-outline-primary btn-block"
-                                type="submit">Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
         </div>
         <!-- /Row -->
-
     </div>
     <!-- /Container -->
 @endsection
@@ -155,14 +151,9 @@
                     success: function (data) {
                         if (data.output == 'default') {
                             var message = '<div class="alert alert-success" role="alert">\n' +
-                                '                                                <h4 class="alert-heading mb-10">You are done for the day!</h4>\n' +
-                                '                                                <p>Your attendance has been marked.</p>\n' +
-                                '                                                <hr class="hr-soft-success">\n' +
-                                '                                                <p>If you have any queries contact your supervisor.</p>\n' +
-                                '                                            </div>';
+                                '                                                <p class="alert-heading">Your today attendance has been marked!</p></div>';
                             $('.atd_form').html(message);
                         } else if (data.output == 'success') {
-                            $('#date').val(data.date);
                             $('#atd_submit').html(data.submit_text);
                             $('#atd_submit').val(data.submit);
                             $('.atd_message').html('');
@@ -204,14 +195,14 @@
                                 position: 'center',
                                 type: 'success',
                                 title: 'Success...',
-                                text: data.message
+                                html: "Successfully " + data.status + ".<br>Your " + data.status + " time is " + data.message
                             });
                         } else {
                             Swal.fire({
                                 position: 'center',
                                 type: 'error',
                                 title: 'Oppss...',
-                                text: 'Unable to perform the action.\n We are having some issues.'
+                                html: 'Unable to perform the action.<br>We are having some issues.'
                             });
                         }
                         $('#atd_table').DataTable().ajax.reload();
@@ -221,7 +212,7 @@
                             position: 'center',
                             type: 'error',
                             title: 'Oppss...',
-                            text: 'Unable to perform the action.\n We are having some issues.'
+                            html: 'Unable to perform the action.<br>We are having some issues.'
                         });
                     }
                 });
@@ -240,7 +231,7 @@
                         $('#requestSubmit').text('Sending Requests ...');
                     },
                     success: function (data) {
-                        if (data.errors.length > 0 ) {
+                        if (data.errors.length > 0) {
                             $.each(data.errors, function (index, error) {
                                 $(error.name).html('<span class="text-danger">' + error.message + '<span>');
                             });
@@ -261,7 +252,7 @@
                             position: 'center',
                             type: 'error',
                             title: 'Oppss...',
-                            text: 'Unable to send request.\n We are having some issues.'
+                            html: 'Unable to send request.<br> We are having some issues.'
                         });
                         $('#requestSubmit').text('Send Requests');
                     }
@@ -290,7 +281,7 @@
                             position: 'center',
                             type: 'error',
                             title: 'Oppss...',
-                            text: 'Unable to perform the action.\n We are having some issues.'
+                            html: 'Unable to send request.<br> We are having some issues.'
                         });
                         $('#request_modal').modal('hide');
                     }

@@ -34,16 +34,30 @@ class RequestsController extends Controller
 
     public function approve(Request $data){
         if (request()->ajax() && request()->method('post') ){
-            $req_id = $data->input('id');
-            $request = Requests::find($req_id);
-            $atd_id = $request->attendance_id;
-            $attendance = Attendance::find($atd_id);
-            $attendance->timein = $request->timein;
-            $attendance->timeout = $request->timeout;
-            $request->status = false;
-            $request->save();
-            $attendance->save();
-            return json_encode('success');
+            $validate = Validator::make($data->all() ,[
+                'id' => 'required|integer',
+                'remark' => 'string|max:255|nullable'
+            ]);
+            $errors = array();
+            if($validate->fails()){
+                $errors = $validate->errors()->all();
+                $output = ['errors' => $errors];
+                return json_encode($output);
+            }
+            else {
+                $req_id = $data->input('id');
+                $request = Requests::find($req_id);
+                $atd_id = $request->attendance_id;
+                $attendance = Attendance::find($atd_id);
+                $attendance->timein = $request->timein;
+                $attendance->timeout = $request->timeout;
+                $request->status = false;
+                $request->remark = $data->input('remark');
+                $request->save();
+                $attendance->save();
+                $output = ['errors' => $errors];
+                return json_encode($output);
+            }
         }
         else{
             return redirect()->route('request.index');

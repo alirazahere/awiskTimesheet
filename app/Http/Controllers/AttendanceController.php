@@ -69,19 +69,20 @@ class AttendanceController extends Controller
             $submit = $request->get('submit');
             if (!empty($submit) && $submit != 'error') {
                 $date = Carbon::now();
+                $time = $date->format('h:i a');
                 if ($submit == 'timein') {
                     Auth::user()->Attendance()->create([
                         'timein' => $date,
                         'timeout' => NULL,
                         'status' => TRUE
                     ]);
-                    $output = ['output' => 'success', 'message' => 'Your timein has been marked.'];
+                    $output = ['output' => 'success', 'message' => $time , 'status'=>'Timed in'];
                     return json_encode($output);
                 } else if ($submit == 'timeout') {
                     $atd = Auth::user()->Attendance()->latest('timein')->first();
                     $atd->timeout = $date;
                     $atd->save();
-                    $output = ['output' => 'success', 'message' => 'Your timeout has been marked.'];
+                    $output = ['output' => 'success', 'message' => $time,'status'=>'Timed out'];
                     return json_encode($output);
                 } else {
                     $output = ['output' => 'error'];

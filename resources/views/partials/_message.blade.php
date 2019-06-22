@@ -4,7 +4,7 @@
             position: 'center',
             type: 'success',
             title: 'Success...',
-            text: '{{ Session::get('success') }}',
+            html: '{{ Session::get('success') }}',
         });
     </script>
 @endif
@@ -14,7 +14,7 @@
             position: 'center',
             type: 'error',
             title: 'Success...',
-            text: '{{Session::get('error')}}',
+            html: '{{Session::get('error')}}',
         });
     </script>
 @endif

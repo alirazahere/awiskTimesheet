@@ -78,7 +78,7 @@
                                                                 / Old
                                                                 Timeout: {{ date('h:i a',strtotime($request->Attendance->timeout)) }}
                                                             </li>
-                                                            <li> Message: {{$request->message}} </li>
+                                                            <li> Remarks: {{ empty($request->remark) ? 'No remarks' : $request->remark }} </li>
                                                         </ul>
                                                     </li>
                                                 @endforeach
@@ -95,6 +95,39 @@
             </div>
         </div>
     </section>
+    {{-- Remarks Modal   --}}
+    <!-- Modal -->
+    <div class="modal fade" id="remark_modal" tabindex="-1" role="dialog" aria-labelledby="Remarks" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Remarks</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="remark_form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input id="req_id" type="hidden">
+                            <textarea class="form-control" id="remarks" name="remarks" id="" cols="30" rows="8"
+                                      placeholder="Enter request remarks"></textarea>
+                            <small class="title">*Optional</small>
+                            <div class="remarks_error">
+                                <ul>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="remark_btn" class="btn btn-primary">Approve Request.</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @stop
 @section('script')
     <script>
@@ -102,15 +135,26 @@
             $(document).on('click', '.btn_approve', function (e) {
                 e.preventDefault();
                 var req_id = $(this).data("id");
+                $('.remarks_error ul').html('');
+                if (req_id != null) {
+                    $('#req_id').val(req_id);
+                    $('#remark_modal').modal('show');
+                }
+            });
+            $(document).on('submit', '#remark_form', function (e) {
+                e.preventDefault();
                 var token = $('meta[name="csrf-token"]').attr("content");
+                var req_id =  $('#req_id').val();
+                var remark = $('#remarks').val();
                 $.ajax({
                     url: '{{route("request.approve")}}',
                     method: 'post',
                     dataType: 'json',
-                    data: {id: req_id, _token: token},
+                    data: {id: req_id, _token: token,remark:remark},
                     success: function (data) {
-                        if (data == 'success') {
+                        if (data.errors.length <= 0 ) {
                             $(".reload_sec").load("{{route('request.index')}} .reload_sec");
+                            $('#remark_modal').modal('hide');
                             Swal.fire({
                                 position: 'center',
                                 type: 'success',
@@ -118,12 +162,11 @@
                                 text: 'Your request has been approved.'
                             });
                         } else {
-                            Swal.fire({
-                                position: 'center',
-                                type: 'error',
-                                title: 'Oppss...',
-                                text: 'Unable to perform the action.\n We are having some issues.'
+                            $error = '';
+                            $.each(data.errors,function (index,error) {
+                                $output+='<li>'+error+'</li>';
                             });
+                            $('.remarks_error ul').html($error);
                         }
                     }
                 });

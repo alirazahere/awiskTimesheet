@@ -13,9 +13,15 @@
                 <a class="nav-link {{ Route::current()->getName() == 'page.dashboard' ? 'active' : '' }} "
                    href="{{route('page.dashboard')}}">Dashboard</a>
             </li>
+            @if (Auth::user()->Role->first()->role == 'LineManager')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::current()->getName() == 'request.index' ? 'active' : '' }} "
+                       href="{{route('request.index')}}">Requests</a>
+                </li>
+            @endif
             <li class="nav-item">
                 <a class="nav-link {{ Route::current()->getName() == 'request.index' ? 'active' : '' }} "
-                   href="{{route('request.index')}}">Requests</a>
+                   href="{{route('request.index')}}">Previous Attendance</a>
             </li>
         </ul>
     </div>
@@ -30,10 +36,12 @@
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} "
-                   href="{{route('user.index')}}"><i
-                            class="dropdown-icon zmdi zmdi-account-add"></i><span>Manage Users</span></a>
-                <div class="dropdown-divider"></div>
+                @if (Auth::user()->Role->first()->role == 'Admin')
+                    <a class="dropdown-item {{ Route::current()->getName() == 'user.index' ? 'active text-white' : '' }} "
+                       href="{{route('user.index')}}"><i
+                                class="dropdown-icon zmdi zmdi-account-add"></i><span>Manage Users</span></a>
+                    <div class="dropdown-divider"></div>
+                @endif
                 <a class="dropdown-item" href="{{ route('logout') }}"
                    onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();"><i
