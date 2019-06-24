@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller
 {
@@ -31,10 +33,10 @@ class AttendanceController extends Controller
                 $prev_check = Carbon::parse($previous_atd->timein)->addHours(12);
                 if ($date->gte($prev_check) && empty($today_atd)) {
                     $output = ['output' => 'warning', 'message' => 'You did not marked your previous attendance.
-                     Please make a request to your supervisor.', 'submit_text' => 'Mark Your TimeIn.', 'submit' => 'timein', 'date' => $today];
+                     Please make a request to your supervisor.', 'submit_text' => 'Mark Your Time In.', 'submit' => 'timein', 'date' => $today];
                     return json_encode($output);
                 } else if ($previous_atd->timein != NULL && $previous_atd->timeout == NULL) {
-                    $output = ['output' => 'success', 'submit_text' => 'Mark Your TimeOut.', 'submit' => 'timeout', 'date' => $yestarday];
+                    $output = ['output' => 'success', 'submit_text' => 'Mark Your Time Out.', 'submit' => 'timeout', 'date' => $yestarday];
                     return json_encode($output);
                 }
             } else {
@@ -46,10 +48,10 @@ class AttendanceController extends Controller
                         $output = ['output' => 'success', 'submit_text' => 'Mark Your TimeOut', 'submit' => 'timeout', 'date' => $today];
                         return json_encode($output);
                     } else {
-                        return json_encode($output = ['output' => 'success', 'submit_text' => 'Mark Your TimeIn', 'submit' => 'timein', 'date' => $today]);
+                        return json_encode($output = ['output' => 'success', 'submit_text' => 'Mark Your Time In', 'submit' => 'timein', 'date' => $today]);
                     }
                 } else {
-                    return json_encode($output = ['output' => 'success', 'submit_text' => 'Mark Your TimeIn', 'submit' => 'timein', 'date' => $today]);
+                    return json_encode($output = ['output' => 'success', 'submit_text' => 'Mark Your Time In', 'submit' => 'timein', 'date' => $today]);
                 }
             }
         } else {
@@ -76,13 +78,13 @@ class AttendanceController extends Controller
                         'timeout' => NULL,
                         'status' => TRUE
                     ]);
-                    $output = ['output' => 'success', 'message' => $time , 'status'=>'Timed in'];
+                    $output = ['output' => 'success', 'message' => $time, 'status' => 'Timed in'];
                     return json_encode($output);
                 } else if ($submit == 'timeout') {
                     $atd = Auth::user()->Attendance()->latest('timein')->first();
                     $atd->timeout = $date;
                     $atd->save();
-                    $output = ['output' => 'success', 'message' => $time,'status'=>'Timed out'];
+                    $output = ['output' => 'success', 'message' => $time, 'status' => 'Timed out'];
                     return json_encode($output);
                 } else {
                     $output = ['output' => 'error'];
@@ -94,6 +96,42 @@ class AttendanceController extends Controller
             }
         } else {
             return redirect()->route('page.dashboard');
+        }
+    }
+
+    public function previous()
+    {
+        return view('pages.previous_attendance');
+    }
+
+    public function store_previous(Request $request)
+    {
+        if (request()->ajax() && request()->method('post')) {
+            $validate = Validator::make($request->all(), [
+                'timein' => 'required|date_format:H:i',
+                'timeout' => 'required|date_format:H:i',
+                'timein_date' => 'required|date',
+                'timeout_date' => 'required|date',
+            ]);
+            $errors = array();
+            if (!$validate->fails()) {
+                $timeIn = $request->input('timein_date') . " " . $request->input('timein');
+                $timeOut = $request->input('timeout_date') . " " . $request->input('timeout');
+                Attendance::create([
+                    'timein' => $timeIn,
+                    'timeout' => $timeOut,
+                    'status' => True,
+                    'user_id' => Auth::user()->id,
+                ]);
+                return json_encode('success');
+            } else {
+                foreach ($validate->messages()->getMessages() as $field_name => $messages) {
+                    $errors[] = array('name' => "." . $field_name . "_error", 'message' => $messages);
+                }
+                return json_encode($errors);
+            }
+        } else {
+            return redirect()->route('attendance.previous');
         }
     }
 }

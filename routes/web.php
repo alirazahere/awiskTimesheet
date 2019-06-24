@@ -23,6 +23,8 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 //Attendance Controller
 Route::post('/attendance/store', 'AttendanceController@store')->name('attendance.store');
 Route::post('/attendance/create', 'AttendanceController@create')->name('attendance.create');
+Route::post('/attendance/previous/store', 'AttendanceController@store_previous')->name('attendance.previous.store');
+Route::get('/attendance/previous','AttendanceController@previous')->name('attendance.previous');
 
 //User Controller
 Route::resource('user', 'UserController')->except(['show', 'create']);

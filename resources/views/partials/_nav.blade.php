@@ -13,15 +13,13 @@
                 <a class="nav-link {{ Route::current()->getName() == 'page.dashboard' ? 'active' : '' }} "
                    href="{{route('page.dashboard')}}">Dashboard</a>
             </li>
-            @if (Auth::user()->Role->first()->role == 'LineManager')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::current()->getName() == 'request.index' ? 'active' : '' }} "
                        href="{{route('request.index')}}">Requests</a>
                 </li>
-            @endif
             <li class="nav-item">
                 <a class="nav-link {{ Route::current()->getName() == 'request.index' ? 'active' : '' }} "
-                   href="{{route('request.index')}}">Previous Attendance</a>
+                   href="{{route('attendance.previous')}}">Previous Attendance</a>
             </li>
         </ul>
     </div>
