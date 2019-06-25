@@ -99,7 +99,45 @@
                             </div>
                         </div>
                     @else
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <section class="hk-sec-wrapper justify-content-center">
+                                    <p class="mb-40">Add advanced interaction controls to HTML tables like <code>search,
+                                            pagination &
+                                            selectors</code>. For responsive table just add the <code>responsive:
+                                            true</code> to your
+                                        DataTables function. <a href="https://datatables.net/reference/option/"
+                                                                target="_blank">View all
+                                            options</a>.</p>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <div class="table-wrap">
+                                                <table id="atd_table" class="table table-hover w-100 display pb-30">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>TimeIn</th>
+                                                        <th>TimeIn Date</th>
+                                                        <th>TimeOut</th>
+                                                        <th>TimeOut Date</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach(Auth::user()->UserRequest->all() as $req)
+                                                        <td>{{ date('h:i a', strtotime($req->timein)) }}</td>
+                                                        <td>{{ date('Y-m-d', strtotime($req->timein)) }}</td>
+                                                        <td>{{ date('h:i a', strtotime($req->timeout)) }}</td>
+                                                        <td>{{ date('Y-m-d', strtotime($req->timeout)) }}</td>
+                                                        <td><span class="badge {{ $req->status == True ? "badge-info" : 'badge-success' }}">{{ $req->status == True ? "Pending" : 'Approved' }}</span></td>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
                     @endif
 
                 </div>
