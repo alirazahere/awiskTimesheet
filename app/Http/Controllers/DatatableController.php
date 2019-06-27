@@ -81,7 +81,15 @@ class DatatableController extends Controller
     protected function AttendanceDatatable()
     {
         if (request()->ajax()) {
-            $atds = Attendance::whereUser_id(Auth::user()->id);
+            $s_date = (!empty($_GET["search_atd"])) ? ($_GET["search_atd"]) : ('');
+            if($s_date !=''){
+                $date = explode ("-", $s_date);
+                $atds = Attendance::whereUser_id(Auth::user()->id)->whereMonth('timein',$date[0])->whereYear('timein',$date[1]);
+            }
+            else{
+                $atds = Attendance::whereUser_id(Auth::user()->id);
+            }
+
             return DataTables::of($atds)
                 ->addColumn('time_in', function ($data) {
                     return date('h:i a', strtotime($data->timein));
@@ -115,5 +123,6 @@ class DatatableController extends Controller
             return redirect()->route('login');
         }
     }
+
 
 }

@@ -77,6 +77,7 @@
 
 <!-- Init JavaScript -->
 <script src="{{asset('dist/js/init.js')}}"></script>
+<script src="dist/js/tooltip-data.js"></script>
 
 {{--Data Table--}}
 <script src="{{asset('vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>

@@ -6,6 +6,7 @@ use App\Attendance;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Requests;
 
@@ -20,46 +21,60 @@ class RequestsController extends Controller
     {
         $users = User::whereLine_manager(Auth::user()->id)->get();
         $requests = array();
-        $pending_requests = array();
+        $approved_requests = array();
+        $rejected_requests = array();
         foreach ($users as $user) {
-            foreach ($user->UserRequest()->whereStatus(true)->get() as $request) {
+            foreach ($user->UserRequest()->whereStatus('pending')->get() as $request) {
                 $requests[] = $request;
             }
-            foreach ($user->UserRequest()->whereStatus(false)->get() as $pending_request) {
-                $pending_requests[] = $pending_request;
+            foreach ($user->UserRequest()->whereStatus('approved')->get() as $pending_request) {
+                $approved_requests[] = $pending_request;
+            }
+            foreach ($user->UserRequest()->whereStatus('rejected')->get() as $pending_request) {
+                $rejected_requests[] = $pending_request;
             }
         }
-        return view('requests.index')->withRequests($requests)->withPendingRequests($pending_requests);
+        return view('requests.index')->withRequests($requests)
+            ->withApprovedRequests($approved_requests)->withRejectedRequests($rejected_requests);
     }
 
-    public function approve(Request $data){
-        if (request()->ajax() && request()->method('post') ){
-            $validate = Validator::make($data->all() ,[
+    public function approve(Request $data)
+    {
+        if (request()->ajax() && request()->method('post')) {
+            $validate = Validator::make($data->all(), [
                 'id' => 'required|integer',
-                'remark' => 'string|max:255|nullable'
+                'remark' => 'string|max:255|nullable',
+                'status' => 'required|string',
             ]);
             $errors = array();
-            if($validate->fails()){
+            if ($validate->fails()) {
                 $errors = $validate->errors()->all();
                 $output = ['errors' => $errors];
                 return json_encode($output);
-            }
-            else {
+            } else {
+                $status = $data->input('status');
                 $req_id = $data->input('id');
                 $request = Requests::find($req_id);
-                $atd_id = $request->attendance_id;
-                $attendance = Attendance::find($atd_id);
-                $attendance->timein = $request->timein;
-                $attendance->timeout = $request->timeout;
-                $request->status = false;
-                $request->remark = $data->input('remark');
-                $request->save();
-                $attendance->save();
+                if ($status == 'approve') {
+                    $atd_id = $request->attendance_id;
+                    $attendance = Attendance::find($atd_id);
+                    $attendance->timein = $request->timein;
+                    $attendance->timeout = $request->timeout;
+                    $request->status = 'approved';
+                    $request->remark = $data->input('remark');
+                    $request->save();
+                    $attendance->save();
+                } else if ($status == 'reject') {
+                    $request->status = 'rejected';
+                    $request->save();
+                } else {
+                    Session::flash('error', 'Something went wrong <br> Unable to perform the action.');
+                    return redirect()->route('request.index');
+                }
                 $output = ['errors' => $errors];
                 return json_encode($output);
             }
-        }
-        else{
+        } else {
             return redirect()->route('request.index');
         }
     }
@@ -94,7 +109,7 @@ class RequestsController extends Controller
                     'message' => $data->input('message'),
                     'attendance_id' => $data->input('atd_id'),
                     'author' => Auth::user()->id,
-                    'status' => TRUE,
+                    'status' => 'pending',
                 ]);
                 $output = ['errors' => $error_array, 'success', $success];
                 return json_encode($output);

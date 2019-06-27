@@ -13,7 +13,7 @@
         Swal.fire({
             position: 'center',
             type: 'error',
-            title: 'Success...',
+            title: 'Error...',
             html: '{{Session::get('error')}}',
         });
     </script>

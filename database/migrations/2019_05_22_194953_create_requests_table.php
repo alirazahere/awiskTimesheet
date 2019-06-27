@@ -21,7 +21,7 @@ class CreateRequestsTable extends Migration
             $table->string('message')->nullable();
             $table->string('remark')->nullable();;
             $table->integer('author')->unsigned();
-            $table->boolean('status');
+            $table->string('status',50);
             $table->integer('attendance_id')->unsigned();
             $table->foreign('author')->references('id')
                 ->on('users')->onDelete('cascade');

@@ -36,6 +36,16 @@
                         DataTables function. <a href="https://datatables.net/reference/option/" target="_blank">View all
                             options</a>.</p>
                     <div class="row">
+                        <div class="col-md-5">
+                            <input value="06-2019" PLACEHOLDER="Select Month and Year" class="form-control" id="table_date" type="text">
+                        </div>
+                        <div class="col-md-7">
+                            <button type="button" id="table_search" class="btn btn-primary">Search</button>
+                            <button type="button" id="table_all" class="btn btn-info">Show All</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
                         <div class="col-sm">
                             <div class="table-wrap">
                                 <table id="atd_table" class="table table-hover w-100 display pb-30">
@@ -127,11 +137,22 @@
     <script>
         $(document).ready(function () {
             create_atd_form();
-            $('#atd_table').DataTable({
+            $("#table_date").datepicker({
+                format: "mm-yyyy",
+                viewMode: "months",
+                minViewMode: "months"
+            });
+            var table = $('#atd_table').DataTable({
                 processing: true,
                 serverSide: true,
                 dataType: 'json',
-                ajax: '{!! route('datatable.get_attendances') !!}',
+                ajax: {
+                    url: '{!! route('datatable.get_attendances') !!}',
+                    type: 'GET',
+                    data: function (d) {
+                        d.search_atd = $('#table_date').val();
+                    }
+                },
                 columns: [
                     {data: 'time_in', name: 'time_in'},
                     {data: 'timein_date', name: 'timein_date'},
@@ -244,6 +265,7 @@
                             });
                             $('#request_form')[0].reset();
                             $('#request_form .help-block').html('');
+                            $('#request_modal').modal('hide');
                         }
                         $('#requestSubmit').text('Send Requests');
                     },
@@ -286,6 +308,13 @@
                         $('#request_modal').modal('hide');
                     }
                 });
+            });
+            $(document).on('click', '#table_search', function () {
+                table.draw(true)
+            });
+            $(document).on('click', '#table_all', function () {
+                $('#table_date').val('');
+                table.draw(true)
             });
         });
     </script>
