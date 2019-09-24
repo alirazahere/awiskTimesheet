@@ -37,7 +37,7 @@
                             options</a>.</p>
                     <div class="row">
                         <div class="col-md-5">
-                            <input value="06-2019" PLACEHOLDER="Select Month and Year" class="form-control" id="table_date" type="text">
+                            <input value="" PLACEHOLDER="Select Month and Year" class="form-control" id="table_date" type="text">
                         </div>
                         <div class="col-md-7">
                             <button type="button" id="table_search" class="btn btn-primary">Search</button>
